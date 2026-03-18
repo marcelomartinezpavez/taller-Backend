@@ -1,9 +1,5 @@
 package com.personal.taller.request;
 
-import com.personal.taller.dto.EmpresaDto;
-
-import javax.persistence.*;
-
 public class EmpresaAndUser {
 
     private String users;

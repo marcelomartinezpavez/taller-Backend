@@ -1,18 +1,14 @@
 package com.personal.taller.dto;
 
-//import org.springframework.data.annotation.Id;
-
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 //@Document("clientes")
 
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer" })
 @Entity
 @Table(name = "clientes")
 public class ClienteDto implements Serializable {
@@ -25,7 +21,7 @@ public class ClienteDto implements Serializable {
     private String nombre;
     @Column(name = "apellido")
     private String apellido;
-    //@Id
+    // @Id
     @Column(name = "rut")
     private String rut;
     @Column(name = "direccion")
@@ -51,10 +47,12 @@ public class ClienteDto implements Serializable {
     @JoinColumn(name = "empresa_id")
     private EmpresaDto empresa;
 
-    public ClienteDto(){}
+    public ClienteDto() {
+    }
 
-    public ClienteDto(long id, boolean habilitado, String nombre, String apellido, String rut, String direccion, String comuna,
-                      String ciudad, String telefono, String email) {
+    public ClienteDto(long id, boolean habilitado, String nombre, String apellido, String rut, String direccion,
+            String comuna,
+            String ciudad, String telefono, String email) {
         super();
         this.id = id;
         this.habilitado = habilitado;

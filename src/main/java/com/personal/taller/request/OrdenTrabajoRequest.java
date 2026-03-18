@@ -1,7 +1,5 @@
 package com.personal.taller.request;
 
-import com.personal.taller.dto.DetalleDto;
-
 import java.util.List;
 
 public class OrdenTrabajoRequest {
@@ -16,7 +14,9 @@ public class OrdenTrabajoRequest {
     private String estado;
 
     private long idEmpresa;
-    private List<DetalleRequest> detalle;
+    private List<DetalleRepuestoRequest> detalleRepuesto;
+    private List<TrabajosGeneralesRequest> trabajosGenerales;
+    private List<TrabajosTercerosRequest> trabajosTerceros;
 
     public long getId() {
         return id;
@@ -82,12 +82,12 @@ public class OrdenTrabajoRequest {
         this.idEmpresa = idEmpresa;
     }
 
-    public List<DetalleRequest> getDetalle() {
-        return detalle;
+    public List<DetalleRepuestoRequest> getDetalleRepuesto() {
+        return detalleRepuesto;
     }
 
-    public void setDetalle(List<DetalleRequest> detalle) {
-        this.detalle = detalle;
+    public void setDetalleRepuesto(List<DetalleRepuestoRequest> detalleRepuesto) {
+        this.detalleRepuesto = detalleRepuesto;
     }
 
     public boolean isHabilitado() {
@@ -101,4 +101,33 @@ public class OrdenTrabajoRequest {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    /**
+     * @return List<TrabajosGeneralesRequest> return the trabajosGenerales
+     */
+    public List<TrabajosGeneralesRequest> getTrabajosGenerales() {
+        return trabajosGenerales;
+    }
+
+    /**
+     * @param trabajosGenerales the trabajosGenerales to set
+     */
+    public void setTrabajosGenerales(List<TrabajosGeneralesRequest> trabajosGenerales) {
+        this.trabajosGenerales = trabajosGenerales;
+    }
+
+    /**
+     * @return List<TrabajoTercerosRequest> return the trabajoTerceros
+     */
+    public List<TrabajosTercerosRequest> getTrabajosTerceros() {
+        return trabajosTerceros;
+    }
+
+    /**
+     * @param trabajoTerceros the trabajoTerceros to set
+     */
+    public void setTrabajosTerceros(List<TrabajosTercerosRequest> trabajosTerceros) {
+        this.trabajosTerceros = trabajosTerceros;
+    }
+
 }

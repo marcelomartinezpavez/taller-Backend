@@ -1,17 +1,12 @@
 package com.personal.taller.dto;
 
-//import org.springframework.data.annotation.Id;
-//import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
-//@Document("vehiculo")
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer" })
 @Entity
 @Table(name = "vehiculo")
 public class VehiculoDto implements Serializable {
@@ -47,11 +42,11 @@ public class VehiculoDto implements Serializable {
     @Column(name = "ordenTrabajo")
     private Set<OrdenTrabajoDto> ordenTrabajo;
 
-
-    public VehiculoDto(){}
+    public VehiculoDto() {
+    }
 
     public VehiculoDto(long id, boolean habilitado, String marca, String modelo, String patente, String anio,
-                        String numeroMotor, String numeroChasis, String rutDueno, String color, String kilometraje) {
+            String numeroMotor, String numeroChasis, String rutDueno, String color, String kilometraje) {
         super();
         this.id = id;
         this.habilitado = habilitado;

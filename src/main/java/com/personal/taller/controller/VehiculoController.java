@@ -6,7 +6,6 @@ import com.personal.taller.dto.VehiculoDto;
 import com.personal.taller.repository.ClienteRepository;
 import com.personal.taller.repository.VehiculoRepository;
 import com.personal.taller.request.VehiculoRequest;
-import com.personal.taller.response.VehiculoClienteResponse;
 import com.personal.taller.response.VehiculoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @Controller
-@RequestMapping("vehiculo")
+@RequestMapping("vehiculos")
 public class VehiculoController {
 
     @Autowired
@@ -29,13 +28,12 @@ public class VehiculoController {
 
     @GetMapping(path = "/all", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getAllVehiculo() {
+    public @ResponseBody ResponseEntity getAllVehiculo() {
         System.out.println("getAll Vehiculo");
 
         List<VehiculoDto> vehiculoDtoList = vehiculoRepository.findAllHabilitado();
         List<VehiculoDto> vehRespList = new ArrayList<>();
-        for(VehiculoDto vehiculo:vehiculoDtoList){
+        for (VehiculoDto vehiculo : vehiculoDtoList) {
             VehiculoDto vehResp = new VehiculoDto();
             vehResp.setId(vehiculo.getId());
             vehResp.setRutDueno(vehiculo.getRutDueno());
@@ -58,13 +56,12 @@ public class VehiculoController {
 
     @GetMapping(value = "/cliente/{rutCliente}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getVehiculoByCliente(@PathVariable String rutCliente) {
+    public @ResponseBody ResponseEntity getVehiculoByCliente(@PathVariable String rutCliente) {
 
         List<VehiculoDto> vehiculoDtoList = vehiculoRepository.findByRutDueno(rutCliente);
 
         List<VehiculoDto> vehRespList = new ArrayList<>();
-        for(VehiculoDto vehiculo:vehiculoDtoList){
+        for (VehiculoDto vehiculo : vehiculoDtoList) {
             VehiculoDto vehResp = new VehiculoDto();
             vehResp.setId(vehiculo.getId());
             vehResp.setRutDueno(vehiculo.getRutDueno());
@@ -80,7 +77,7 @@ public class VehiculoController {
             vehRespList.add(vehResp);
 
             Set<ClienteDto> clienteDtoSet = new HashSet<>();
-            for (ClienteDto clienteDto: vehiculo.getCliente()){
+            for (ClienteDto clienteDto : vehiculo.getCliente()) {
                 ClienteDto clte = new ClienteDto();
                 clte.setId(clienteDto.getId());
                 clte.setApellido(clienteDto.getApellido());
@@ -105,22 +102,18 @@ public class VehiculoController {
 
             vehResp.setCliente(clienteDtoSet);
 
-
         }
 
-        //VehiculoResponse vehiculoResponse = new VehiculoResponse();
-        //vehiculoResponse.setVehiculoDtoList(vehRespList);
         return new ResponseEntity<>(vehRespList, HttpStatus.OK);
 
     }
 
     @GetMapping(value = "/{patente}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getVehiculo(@PathVariable String patente) {
-        VehiculoDto vehiculo =  vehiculoRepository.findByPatente(patente);
-        if(vehiculo == null){
-            return new ResponseEntity("Vehiculo no se encuentra",HttpStatus.NO_CONTENT);
+    public @ResponseBody ResponseEntity getVehiculo(@PathVariable String patente) {
+        VehiculoDto vehiculo = vehiculoRepository.findByPatente(patente);
+        if (vehiculo == null) {
+            return new ResponseEntity("Vehiculo no se encuentra", HttpStatus.NO_CONTENT);
         }
         VehiculoDto vehResp = new VehiculoDto();
         vehResp.setId(vehiculo.getId());
@@ -136,7 +129,7 @@ public class VehiculoController {
         vehResp.setPatente(vehiculo.getPatente());
 
         Set<ClienteDto> clienteDtoSet = new HashSet<>();
-        for (ClienteDto clienteDto: vehiculo.getCliente()){
+        for (ClienteDto clienteDto : vehiculo.getCliente()) {
             ClienteDto clte = new ClienteDto();
             clte.setId(clienteDto.getId());
             clte.setApellido(clienteDto.getApellido());
@@ -160,17 +153,15 @@ public class VehiculoController {
         }
 
         vehResp.setCliente(clienteDtoSet);
-        return new ResponseEntity(vehResp,HttpStatus.OK);
+        return new ResponseEntity(vehResp, HttpStatus.OK);
     }
-
 
     @GetMapping(value = "/{patente}/empresa/{empresa}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getVehiculoByEmpresa(@PathVariable String patente, @PathVariable long empresa) {
+    public @ResponseBody ResponseEntity getVehiculoByEmpresa(@PathVariable String patente, @PathVariable long empresa) {
         VehiculoDto vehiculo = vehiculoRepository.findByPatenteAndEmpresa(patente, empresa);
-        if (vehiculo==null){
-            return new ResponseEntity("Vehiculo no se encuentra",HttpStatus.NO_CONTENT);
+        if (vehiculo == null) {
+            return new ResponseEntity("Vehiculo no se encuentra", HttpStatus.NO_CONTENT);
         }
         VehiculoDto vehResp = new VehiculoDto();
         vehResp.setId(vehiculo.getId());
@@ -186,7 +177,7 @@ public class VehiculoController {
         vehResp.setPatente(vehiculo.getPatente());
 
         Set<ClienteDto> clienteDtoSet = new HashSet<>();
-        for (ClienteDto clienteDto: vehiculo.getCliente()){
+        for (ClienteDto clienteDto : vehiculo.getCliente()) {
             ClienteDto clte = new ClienteDto();
             clte.setId(clienteDto.getId());
             clte.setApellido(clienteDto.getApellido());
@@ -210,15 +201,11 @@ public class VehiculoController {
         }
 
         vehResp.setCliente(clienteDtoSet);
-
 
         return new ResponseEntity(vehResp, HttpStatus.OK);
     }
 
-
-    @PostMapping(path = "/insert",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
     public ResponseEntity create(@RequestBody VehiculoRequest newVehiculo) {
 
@@ -234,14 +221,15 @@ public class VehiculoController {
         vehiculoDto.setNumeroChasis(newVehiculo.getNumeroChasis());
         vehiculoDto.setNumeroMotor(newVehiculo.getNumeroMotor());
         vehiculoDto.setRutDueno(newVehiculo.getRutDueno());
-        if(newVehiculo.getRutDueno() == null){
-            return new ResponseEntity("Vehiculo debe tener dueño",HttpStatus.BAD_REQUEST);
+        if (newVehiculo.getRutDueno() == null) {
+            return new ResponseEntity("Vehiculo debe tener dueño", HttpStatus.BAD_REQUEST);
         }
 
-        Optional<ClienteDto> clienteDtoOptional = clienteRepository.findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(),newVehiculo.getId_empresa());
+        Optional<ClienteDto> clienteDtoOptional = clienteRepository
+                .findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(), newVehiculo.getId_empresa());
         ClienteDto cliente = new ClienteDto();
 
-        if (clienteDtoOptional.isPresent()){
+        if (clienteDtoOptional.isPresent()) {
             EmpresaDto empresaDto = new EmpresaDto();
             Set<ClienteDto> clienteDtoSet = new HashSet<>();
             cliente.setId(clienteDtoOptional.get().getId());
@@ -264,24 +252,22 @@ public class VehiculoController {
             clienteDtoSet.add(cliente);
 
             vehiculoDto.setCliente(clienteDtoSet);
-        }else{
-            return new ResponseEntity("Dueño de vehiculo no se encuentra",HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity("Dueño de vehiculo no se encuentra", HttpStatus.BAD_REQUEST);
         }
 
         try {
             VehiculoDto vehiculoAgregado = vehiculoRepository.save(vehiculoDto);
 
-        }catch (Exception e){
-            return new ResponseEntity("Ocurrio un error interno",HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity("Ocurrio un error interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity(vehiculoDto, HttpStatus.CREATED);
 
     }
 
-    @PutMapping(path = "/update",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
     public ResponseEntity update(@RequestBody VehiculoRequest newVehiculo) {
         try {
@@ -299,14 +285,15 @@ public class VehiculoController {
             vehiculoDto.setNumeroChasis(newVehiculo.getNumeroChasis());
             vehiculoDto.setNumeroMotor(newVehiculo.getNumeroMotor());
             vehiculoDto.setRutDueno(newVehiculo.getRutDueno());
-            if(newVehiculo.getRutDueno() == null){
-                return new ResponseEntity("Vehiculo debe tener dueño",HttpStatus.BAD_REQUEST);
+            if (newVehiculo.getRutDueno() == null) {
+                return new ResponseEntity("Vehiculo debe tener dueño", HttpStatus.BAD_REQUEST);
             }
 
-            Optional<ClienteDto> clienteDtoOptional = clienteRepository.findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(),newVehiculo.getId_empresa());
+            Optional<ClienteDto> clienteDtoOptional = clienteRepository
+                    .findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(), newVehiculo.getId_empresa());
             ClienteDto cliente = new ClienteDto();
 
-            if (clienteDtoOptional.isPresent()){
+            if (clienteDtoOptional.isPresent()) {
                 EmpresaDto empresaDto = new EmpresaDto();
                 Set<ClienteDto> clienteDtoSet = new HashSet<>();
                 cliente.setId(clienteDtoOptional.get().getId());
@@ -329,99 +316,40 @@ public class VehiculoController {
                 clienteDtoSet.add(cliente);
 
                 vehiculoDto.setCliente(clienteDtoSet);
-            }else{
-                return new ResponseEntity("Dueño de vehiculo no se encuentra",HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity("Dueño de vehiculo no se encuentra", HttpStatus.BAD_REQUEST);
             }
 
             try {
                 VehiculoDto vehiculoAgregado = vehiculoRepository.save(vehiculoDto);
 
-            }catch (Exception e){
-                return new ResponseEntity("Ocurrio un error interno",HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (Exception e) {
+                return new ResponseEntity("Ocurrio un error interno", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             return new ResponseEntity(vehiculoDto, HttpStatus.OK);
 
-        }catch (Exception e){
-            return new ResponseEntity("Ocurrio un error interno",HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity("Ocurrio un error interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @DeleteMapping(path = "/delete",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
     public ResponseEntity<VehiculoDto> delete(@RequestBody VehiculoRequest newVehiculo) {
 
         try {
 
             Optional<VehiculoDto> vehiculoDtoOptional = vehiculoRepository.findById(newVehiculo.getId());
-            if(vehiculoDtoOptional.isPresent()){
+            if (vehiculoDtoOptional.isPresent()) {
                 VehiculoDto vehiculoDto = vehiculoDtoOptional.get();
                 vehiculoDto.setHabilitado(false);
                 vehiculoRepository.save(vehiculoDto);
                 return new ResponseEntity(vehiculoDto, HttpStatus.OK);
             }
-            /*
-            VehiculoDto vehiculoDto = new VehiculoDto();
-            vehiculoDto.setId(newVehiculo.getId());
-            vehiculoDto.setHabilitado(0);
-            vehiculoDto.setMarca(newVehiculo.getMarca());
-            vehiculoDto.setModelo(newVehiculo.getModelo());
-            vehiculoDto.setPatente(newVehiculo.getPatente());
-            vehiculoDto.setAnio(newVehiculo.getAnio());
-            vehiculoDto.setColor(newVehiculo.getColor());
-            vehiculoDto.setKilometraje(newVehiculo.getKilometraje());
-            vehiculoDto.setModelo(newVehiculo.getModelo());
-            vehiculoDto.setNumeroChasis(newVehiculo.getNumeroChasis());
-            vehiculoDto.setNumeroMotor(newVehiculo.getNumeroMotor());
-            vehiculoDto.setRutDueno(newVehiculo.getRutDueno());
-            if(newVehiculo.getRutDueno() == null){
-                return new ResponseEntity("Vehiculo debe tener dueño",HttpStatus.BAD_REQUEST);
-            }
 
-            Optional<ClienteDto> clienteDtoOptional = clienteRepository.findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(),newVehiculo.getId_empresa());
-            ClienteDto cliente = new ClienteDto();
-
-            if (clienteDtoOptional.isPresent()){
-                EmpresaDto empresaDto = new EmpresaDto();
-                Set<ClienteDto> clienteDtoSet = new HashSet<>();
-                cliente.setId(clienteDtoOptional.get().getId());
-                cliente.setRut(clienteDtoOptional.get().getRut());
-                cliente.setNombre(clienteDtoOptional.get().getNombre());
-                cliente.setDireccion(clienteDtoOptional.get().getDireccion());
-                cliente.setTelefono(clienteDtoOptional.get().getTelefono());
-                cliente.setEmail(clienteDtoOptional.get().getEmail());
-                cliente.setComuna(clienteDtoOptional.get().getComuna());
-                cliente.setCiudad(clienteDtoOptional.get().getCiudad());
-                cliente.setHabilitado(clienteDtoOptional.get().getHabilitado());
-                cliente.setApellido(clienteDtoOptional.get().getApellido());
-
-                empresaDto.setDireccion(clienteDtoOptional.get().getEmpresa().getDireccion());
-                empresaDto.setNombre(clienteDtoOptional.get().getEmpresa().getNombre());
-                empresaDto.setRut(clienteDtoOptional.get().getEmpresa().getRut());
-                empresaDto.setId(clienteDtoOptional.get().getEmpresa().getId());
-
-                cliente.setEmpresa(empresaDto);
-                clienteDtoSet.add(cliente);
-
-                vehiculoDto.setCliente(clienteDtoSet);
-            }else{
-                return new ResponseEntity("Dueño de vehiculo no se encuentra",HttpStatus.BAD_REQUEST);
-            }
-
-            try {
-                VehiculoDto vehiculoAgregado = vehiculoRepository.save(vehiculoDto);
-
-            }catch (Exception e){
-                return new ResponseEntity("Ocurrio un error interno",HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            return new ResponseEntity(vehiculoDto, HttpStatus.OK);
-            */
-            //vehiculoRepository.save(newVehiculo);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity("Ocurrio un error interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity("Vehiculo no encontrado", HttpStatus.NOT_FOUND);

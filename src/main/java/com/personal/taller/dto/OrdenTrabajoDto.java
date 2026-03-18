@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer" })
 @Entity
 @Table(name = "ordenTrabajo")
 public class OrdenTrabajoDto implements Serializable {
@@ -32,41 +32,54 @@ public class OrdenTrabajoDto implements Serializable {
     @Column(name = "fechaCerrado")
     private String fechaCerrado;
 
+    @Column(name = "observaciones")
+    private String observaciones;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehiculo_id", referencedColumnName = "id")
     private VehiculoDto vehiculo;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(name = "detalle")
-    private Set<DetalleDto> detalle;
+    @Column(name = "trabajosGenerales")
+    private Set<TrabajosGeneralesDto> trabajosGenerales;
 
-    //@OneToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "vehiculo_id")
-    //private VehiculoDto vehiculo;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "detalleRepuestos")
+    private Set<DetalleRepuestosDto> detalleRepuestos;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "trabajosTerceros")
+    private Set<TrabajosTercerosDto> trabajosTerceros;
+
+    // @OneToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "vehiculo_id")
+    // private VehiculoDto vehiculo;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     private ClienteDto cliente;
 
-    //@OneToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "rut_cliente")
-    //private ClienteDto rut_cliente;
+    // @OneToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "rut_cliente")
+    // private ClienteDto rut_cliente;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
     private EmpresaDto empresa;
 
-    public OrdenTrabajoDto(){}
+    public OrdenTrabajoDto() {
+    }
 
-    public OrdenTrabajoDto(long id, boolean habilitado, String numeroOrden, String fechaIngreso, String rutCliente, String patenteVehiculo, Set<DetalleDto> detalle, String codigoRepuestos){
+    public OrdenTrabajoDto(long id, boolean habilitado, String numeroOrden, String fechaIngreso, String rutCliente,
+            String patenteVehiculo, Set<DetalleRepuestosDto> detalleRepuestos, String codigoRepuestos) {
         super();
-        this.id= id;
+        this.id = id;
         this.numeroOrden = numeroOrden;
         this.habilitado = habilitado;
         this.fechaIngreso = fechaIngreso;
         this.rutCliente = rutCliente;
         this.patenteVehiculo = patenteVehiculo;
-        this.detalle = detalle;
+        this.detalleRepuestos = detalleRepuestos;
         this.codigo = codigoRepuestos;
     }
 
@@ -118,12 +131,12 @@ public class OrdenTrabajoDto implements Serializable {
         this.patenteVehiculo = patenteVehiculo;
     }
 
-    public Set<DetalleDto> getDetalle() {
-        return detalle;
+    public Set<DetalleRepuestosDto> getDetalleRepuestosDtos() {
+        return detalleRepuestos;
     }
 
-    public void setDetalle(Set<DetalleDto> detalle) {
-        this.detalle = detalle;
+    public void setDetalle(Set<DetalleRepuestosDto> detalleRepuestos) {
+        this.detalleRepuestos = detalleRepuestos;
     }
 
     public String getCodigo() {
@@ -189,4 +202,54 @@ public class OrdenTrabajoDto implements Serializable {
     public void setFechaCerrado(String fechaCerrado) {
         this.fechaCerrado = fechaCerrado;
     }
+
+    /**
+     * @return String return the observaciones
+     */
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    /**
+     * @param observaciones the observaciones to set
+     */
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    /**
+     * @return Set<TrabajosGeneralesDto> return the trabajosGenerales
+     */
+    public Set<TrabajosGeneralesDto> getTrabajosGenerales() {
+        return trabajosGenerales;
+    }
+
+    /**
+     * @param trabajosGenerales the trabajosGenerales to set
+     */
+    public void setTrabajosGenerales(Set<TrabajosGeneralesDto> trabajosGenerales) {
+        this.trabajosGenerales = trabajosGenerales;
+    }
+
+    /**
+     * @param detalleRepuestos the detalleRepuestos to set
+     */
+    public void setDetalleRepuestos(Set<DetalleRepuestosDto> detalleRepuestos) {
+        this.detalleRepuestos = detalleRepuestos;
+    }
+
+    /**
+     * @return Set<TrabajoTercerosDto> return the trabajoTerceros
+     */
+    public Set<TrabajosTercerosDto> getTrabajosTerceros() {
+        return trabajosTerceros;
+    }
+
+    /**
+     * @param trabajoTerceros the trabajoTerceros to set
+     */
+    public void setTrabajosTerceros(Set<TrabajosTercerosDto> trabajosTerceros) {
+        this.trabajosTerceros = trabajosTerceros;
+    }
+
 }

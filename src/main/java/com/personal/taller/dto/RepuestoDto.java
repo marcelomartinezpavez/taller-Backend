@@ -1,17 +1,12 @@
 package com.personal.taller.dto;
 
-//import org.springframework.data.annotation.Id;
-//import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
-//@Document("repuesto")
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer" })
 @Entity
 @Table(name = "repuesto")
 public class RepuestoDto implements Serializable {
@@ -37,7 +32,7 @@ public class RepuestoDto implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "detalle_id")
-    private DetalleDto detalle;
+    private DetalleRepuestosDto detalle;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
@@ -47,11 +42,11 @@ public class RepuestoDto implements Serializable {
     @Column(name = "proveedor")
     private Set<ProveedorDto> proveedor;
 
-
-    public RepuestoDto(){}
+    public RepuestoDto() {
+    }
 
     public RepuestoDto(long id, boolean habilitado, String marca, String modelo, String nombre, String anio,
-                       String codigo, String rutProveedor, long valor) {
+            String codigo, String rutProveedor, long valor) {
         super();
         this.id = id;
         this.habilitado = habilitado;
@@ -136,11 +131,11 @@ public class RepuestoDto implements Serializable {
         this.valor = valor;
     }
 
-    public DetalleDto getDetalle() {
+    public DetalleRepuestosDto getDetalle() {
         return detalle;
     }
 
-    public void setDetalle(DetalleDto detalle) {
+    public void setDetalle(DetalleRepuestosDto detalle) {
         this.detalle = detalle;
     }
 

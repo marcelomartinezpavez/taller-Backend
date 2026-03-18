@@ -1,7 +1,5 @@
 package com.personal.taller.request;
 
-import javax.persistence.Column;
-
 public class ClienteRequest {
 
     private long id;

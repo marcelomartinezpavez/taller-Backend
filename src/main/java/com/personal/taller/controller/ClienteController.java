@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("cliente")
+@RequestMapping("clientes")
 public class ClienteController {
 
     @Autowired
@@ -18,15 +18,13 @@ public class ClienteController {
 
     @GetMapping(path = "/all", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getAllCliente() {
+    public @ResponseBody ResponseEntity getAllCliente() {
         return clienteService.getAll();
     }
 
     @GetMapping(path = "/empresa/{idempresa}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getAllClientePorEmpresa(@PathVariable long idempresa) {
+    public @ResponseBody ResponseEntity getAllClientePorEmpresa(@PathVariable long idempresa) {
         return clienteService.getClientByCompany(idempresa);
     }
 
@@ -36,25 +34,19 @@ public class ClienteController {
         return clienteService.getClientByRut(rut);
     }
 
-    @PostMapping(path = "/insert",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
     public ResponseEntity<ClienteDto> create(@RequestBody ClienteRequest newCliente) {
         return clienteService.createClient(newCliente);
     }
 
-    @PutMapping(path = "/update",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
     public ResponseEntity<ClienteDto> update(@RequestBody ClienteRequest newCliente) {
         return clienteService.updateClient(newCliente);
     }
 
-    @DeleteMapping(path = "/delete",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
     public ResponseEntity<ClienteDto> delete(@RequestBody ClienteRequest newCliente) {
         return clienteService.deleteClient(newCliente);

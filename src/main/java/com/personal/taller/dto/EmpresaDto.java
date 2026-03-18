@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer" })
 @Entity
 @Table(name = "empresa")
 public class EmpresaDto implements Serializable {
@@ -21,9 +20,10 @@ public class EmpresaDto implements Serializable {
     @Column(name = "rut")
     private String rut;
 
-    //@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JoinColumn(name = "users_id")
-    //private UsersDto users;
+    // @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval =
+    // true)
+    // @JoinColumn(name = "users_id")
+    // private UsersDto users;
 
     @OneToMany(fetch = FetchType.EAGER)
     @Column(name = "proveedor")
@@ -41,8 +41,8 @@ public class EmpresaDto implements Serializable {
     @Column(name = "clientes")
     private Set<ClienteDto> clientes;
 
-
-    public EmpresaDto(){}
+    public EmpresaDto() {
+    }
 
     public long getId() {
         return id;
@@ -76,11 +76,13 @@ public class EmpresaDto implements Serializable {
         this.rut = rut;
     }
 
-    /*public UsersDto getUsers() {
-        return users;
-    }
-
-    public void setUsers(UsersDto users) {
-        this.users = users;
-    }*/
+    /*
+     * public UsersDto getUsers() {
+     * return users;
+     * }
+     * 
+     * public void setUsers(UsersDto users) {
+     * this.users = users;
+     * }
+     */
 }
