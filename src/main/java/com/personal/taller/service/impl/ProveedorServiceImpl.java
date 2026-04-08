@@ -1,9 +1,7 @@
 package com.personal.taller.service.impl;
 
 import com.personal.taller.dto.ClienteDto;
-import com.personal.taller.dto.EmpresaDto;
 import com.personal.taller.dto.ProveedorDto;
-import com.personal.taller.repository.EmpresaRepository;
 import com.personal.taller.repository.ProveedorRepository;
 import com.personal.taller.request.ProveedorRequest;
 import com.personal.taller.response.ProveedorResponse;
@@ -23,22 +21,13 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Autowired
     ProveedorRepository proveedorRepository;
 
-    @Autowired
-    EmpresaRepository empresaRepository;
-
     public ResponseEntity getAllProveedor(){
         List<ProveedorDto> proveedorDtoList = proveedorRepository.findAllHabilitado();
 
         List<ProveedorDto> proveedorDtoListResp = new ArrayList<ProveedorDto>();
         for (int i = 0; i<proveedorDtoList.size();i++){
             ProveedorDto proveedor = new ProveedorDto();
-            EmpresaDto empresaDto = new EmpresaDto();
             ProveedorDto proveedorResp = proveedorDtoList.get(i);
-            empresaDto.setId(proveedorResp.getEmpresa().getId());
-            empresaDto.setNombre(proveedorResp.getEmpresa().getNombre());
-            empresaDto.setRut(proveedorResp.getEmpresa().getRut());
-            empresaDto.setDireccion(proveedorResp.getEmpresa().getDireccion());
-
             proveedor.setHabilitado(proveedorResp.getHabilitado());
             proveedor.setNombre(proveedorResp.getNombre());
             proveedor.setApellido(proveedorResp.getApellido());
@@ -48,8 +37,7 @@ public class ProveedorServiceImpl implements ProveedorService {
             proveedor.setCiudad(proveedorResp.getCiudad());
             proveedor.setTelefono(proveedorResp.getTelefono());
             proveedor.setEmail(proveedorResp.getEmail());
-            proveedor.setEmpresa(empresaDto);
-
+            
             proveedorDtoListResp.add(proveedor);
         }
         return new ResponseEntity(proveedorDtoListResp, HttpStatus.OK);
@@ -57,21 +45,15 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     public ResponseEntity getAllProveedorPorEmpresa(long idempresa){
         ProveedorResponse proveedorResponse = new ProveedorResponse();
-        List<ProveedorDto> resp = proveedorRepository.findByEmpresaId(idempresa);
+        List<ProveedorDto> resp = proveedorRepository.findAll();
 
         List<ProveedorDto> proveedorDtoList = new ArrayList<ProveedorDto>();
-        EmpresaDto empresaDto = new EmpresaDto();
-
+        
         //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newCliente.getIdEmpresa());
         for (int i = 0; i<resp.size();i++){
             ProveedorDto proveedor = new ProveedorDto();
 
             ProveedorDto proveedorResp = resp.get(i);
-
-            empresaDto.setId(proveedorResp.getEmpresa().getId());
-            empresaDto.setNombre(proveedorResp.getEmpresa().getNombre());
-            empresaDto.setRut(proveedorResp.getEmpresa().getRut());
-            empresaDto.setDireccion(proveedorResp.getEmpresa().getDireccion());
 
             proveedor.setId(proveedorResp.getId());
             proveedor.setHabilitado(proveedorResp.getHabilitado());
@@ -83,7 +65,6 @@ public class ProveedorServiceImpl implements ProveedorService {
             proveedor.setNombre(proveedorResp.getNombre());
             proveedor.setRut(proveedorResp.getRut());
             proveedor.setTelefono(proveedorResp.getTelefono());
-            proveedor.setEmpresa(empresaDto);
             proveedorDtoList.add(proveedor);
         }
         return new ResponseEntity(proveedorDtoList,HttpStatus.OK);
@@ -93,14 +74,8 @@ public class ProveedorServiceImpl implements ProveedorService {
         Optional<ProveedorDto> proveedores = proveedorRepository.findByRutAndHabilitado(rut);
         if(proveedores.isPresent()){
             ProveedorDto proveedor= new ProveedorDto();
-            EmpresaDto empresaDto = new EmpresaDto();
 
             ProveedorDto clienteResp = proveedores.get();
-            empresaDto.setId(clienteResp.getEmpresa().getId());
-            empresaDto.setNombre(clienteResp.getEmpresa().getNombre());
-            empresaDto.setRut(clienteResp.getEmpresa().getRut());
-            empresaDto.setDireccion(clienteResp.getEmpresa().getDireccion());
-
             proveedor.setId(clienteResp.getId());
             proveedor.setHabilitado(clienteResp.getHabilitado());
             proveedor.setApellido(clienteResp.getApellido());
@@ -111,7 +86,6 @@ public class ProveedorServiceImpl implements ProveedorService {
             proveedor.setNombre(clienteResp.getNombre());
             proveedor.setRut(clienteResp.getRut());
             proveedor.setTelefono(clienteResp.getTelefono());
-            proveedor.setEmpresa(empresaDto);
             return new ResponseEntity(proveedor, HttpStatus.OK);
 
         }else{
@@ -122,7 +96,7 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     public ResponseEntity create(ProveedorRequest newProveedor){
 
-        Optional<ProveedorDto> proveedorDtoOptional = proveedorRepository.findByRutAndHabilitadoAndIdEmpresa(newProveedor.getRut(), newProveedor.getIdEmpresa());
+        Optional<ProveedorDto> proveedorDtoOptional = proveedorRepository.findByRutAndHabilitado(newProveedor.getRut());
         if (proveedorDtoOptional.isPresent()){
             if (!proveedorDtoOptional.get().getHabilitado()){
                 return new ResponseEntity("Proveedor ya se encuentra registrado y esta deshabilitado",HttpStatus.BAD_REQUEST);
@@ -131,9 +105,8 @@ public class ProveedorServiceImpl implements ProveedorService {
         }
 
         ProveedorDto proveedor = new ProveedorDto();
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newProveedor.getIdEmpresa());
-
-        if(respEmpresa.isPresent()) {
+        
+        //if(respEmpresa.isPresent()) {
             proveedor.setHabilitado(newProveedor.getHabilitado());
             proveedor.setApellido(newProveedor.getApellido());
             proveedor.setCiudad(newProveedor.getCiudad());
@@ -143,10 +116,10 @@ public class ProveedorServiceImpl implements ProveedorService {
             proveedor.setNombre(newProveedor.getNombre());
             proveedor.setRut(newProveedor.getRut());
             proveedor.setTelefono(newProveedor.getTelefono());
-            proveedor.setEmpresa(respEmpresa.get());
-        }else{
+            //proveedor.setEmpresa(respEmpresa.get());
+        /*}else{
             return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-        }
+        }*/
         try {
             proveedorRepository.save(proveedor);
         }catch (Exception e){
@@ -157,9 +130,7 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     public ResponseEntity update(ProveedorRequest newProveedor){
         ProveedorDto proveedor = new ProveedorDto();
-        EmpresaDto empresaDto = new EmpresaDto();
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newProveedor.getIdEmpresa());
-        if(respEmpresa.isPresent()) {
+        //if(respEmpresa.isPresent()) {
             proveedor.setId(newProveedor.getId());
             proveedor.setHabilitado(newProveedor.getHabilitado());
             proveedor.setApellido(newProveedor.getApellido());
@@ -170,10 +141,10 @@ public class ProveedorServiceImpl implements ProveedorService {
             proveedor.setNombre(newProveedor.getNombre());
             proveedor.setRut(newProveedor.getRut());
             proveedor.setTelefono(newProveedor.getTelefono());
-            proveedor.setEmpresa(respEmpresa.get());
-        }else{
-            return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-        }
+        //    proveedor.setEmpresa(respEmpresa.get());
+        //}else{
+        //    return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
+        //}
 
         proveedorRepository.save(proveedor);
 

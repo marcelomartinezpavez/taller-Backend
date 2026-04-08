@@ -1,9 +1,7 @@
 package com.personal.taller.service.impl;
 
 import com.personal.taller.dto.ClienteDto;
-import com.personal.taller.dto.EmpresaDto;
 import com.personal.taller.repository.ClienteRepository;
-import com.personal.taller.repository.EmpresaRepository;
 import com.personal.taller.request.ClienteRequest;
 import com.personal.taller.response.ClienteResponse;
 import com.personal.taller.service.ClienteService;
@@ -22,23 +20,13 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     ClienteRepository clienteRepository;
 
-    @Autowired
-    EmpresaRepository empresaRepository;
-
     public ResponseEntity getAll(){
         System.out.println("getAll");
         List<ClienteDto> resp = clienteRepository.findAllHabilitado();
         List<ClienteDto> clienteDtoList = new ArrayList<ClienteDto>();
         for (int i = 0; i<resp.size();i++){
             ClienteDto cliente = new ClienteDto();
-            EmpresaDto empresaDto = new EmpresaDto();
-
             ClienteDto clienteResp = resp.get(i);
-
-            empresaDto.setId(clienteResp.getEmpresa().getId());
-            empresaDto.setNombre(clienteResp.getEmpresa().getNombre());
-            empresaDto.setRut(clienteResp.getEmpresa().getRut());
-            empresaDto.setDireccion(clienteResp.getEmpresa().getDireccion());
 
             cliente.setId(clienteResp.getId());
             cliente.setHabilitado(clienteResp.getHabilitado());
@@ -50,30 +38,23 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setNombre(clienteResp.getNombre());
             cliente.setRut(clienteResp.getRut());
             cliente.setTelefono(clienteResp.getTelefono());
-            cliente.setEmpresa(empresaDto);
             clienteDtoList.add(cliente);
         }
         return new ResponseEntity(clienteDtoList, HttpStatus.OK);
     }
 
-    public ResponseEntity getClientByCompany(long idempresa){
+    public ResponseEntity getClientByCompany(){
         ClienteResponse clienteResponse = new ClienteResponse();
-        List<ClienteDto> resp = clienteRepository.findByEmpresaId(idempresa);
+        List<ClienteDto> resp = clienteRepository.findAll();
 
         List<ClienteDto> clienteDtoList = new ArrayList<ClienteDto>();
-        EmpresaDto empresaDto = new EmpresaDto();
-
+        
         //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newCliente.getIdEmpresa());
         for (int i = 0; i<resp.size();i++){
             ClienteDto cliente = new ClienteDto();
 
             ClienteDto clienteResp = resp.get(i);
 
-            empresaDto.setId(clienteResp.getEmpresa().getId());
-            empresaDto.setNombre(clienteResp.getEmpresa().getNombre());
-            empresaDto.setRut(clienteResp.getEmpresa().getRut());
-            empresaDto.setDireccion(clienteResp.getEmpresa().getDireccion());
-
             cliente.setId(clienteResp.getId());
             cliente.setHabilitado(clienteResp.getHabilitado());
             cliente.setApellido(clienteResp.getApellido());
@@ -84,7 +65,6 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setNombre(clienteResp.getNombre());
             cliente.setRut(clienteResp.getRut());
             cliente.setTelefono(clienteResp.getTelefono());
-            cliente.setEmpresa(empresaDto);
             clienteDtoList.add(cliente);
         }
         return new ResponseEntity(clienteDtoList,HttpStatus.OK);
@@ -94,14 +74,9 @@ public class ClienteServiceImpl implements ClienteService {
         Optional<ClienteDto> clientes = clienteRepository.findByRutAndHabilitado(rut);
         if(clientes.isPresent()){
             ClienteDto cliente= new ClienteDto();
-            EmpresaDto empresaDto = new EmpresaDto();
-
+            
             ClienteDto clienteResp = clientes.get();
-            empresaDto.setId(clienteResp.getEmpresa().getId());
-            empresaDto.setNombre(clienteResp.getEmpresa().getNombre());
-            empresaDto.setRut(clienteResp.getEmpresa().getRut());
-            empresaDto.setDireccion(clienteResp.getEmpresa().getDireccion());
-
+            
             cliente.setId(clienteResp.getId());
             cliente.setHabilitado(clienteResp.getHabilitado());
             cliente.setApellido(clienteResp.getApellido());
@@ -112,7 +87,6 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setNombre(clienteResp.getNombre());
             cliente.setRut(clienteResp.getRut());
             cliente.setTelefono(clienteResp.getTelefono());
-            cliente.setEmpresa(empresaDto);
             return new ResponseEntity(cliente,HttpStatus.OK);
 
         }else{
@@ -122,7 +96,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     public ResponseEntity createClient(ClienteRequest newCliente){
 
-        Optional<ClienteDto> clienteDtoOptional = clienteRepository.findByRutAndHabilitadoAndEmpresa(newCliente.getRut(), newCliente.getIdEmpresa());
+        Optional<ClienteDto> clienteDtoOptional = clienteRepository.findByRutAndHabilitado(newCliente.getRut());
         if (clienteDtoOptional.isPresent()){
             if (!clienteDtoOptional.get().getHabilitado()){
                 return new ResponseEntity("Cliente ya se encuentra registrado y esta deshabilitado",HttpStatus.BAD_REQUEST);
@@ -131,9 +105,9 @@ public class ClienteServiceImpl implements ClienteService {
         }
 
         ClienteDto cliente = new ClienteDto();
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newCliente.getIdEmpresa());
+        //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newCliente.getIdEmpresa());
 
-        if(respEmpresa.isPresent()) {
+        //if(respEmpresa.isPresent()) {
             cliente.setHabilitado(newCliente.getHabilitado());
             cliente.setApellido(newCliente.getApellido());
             cliente.setCiudad(newCliente.getCiudad());
@@ -143,10 +117,10 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setNombre(newCliente.getNombre());
             cliente.setRut(newCliente.getRut());
             cliente.setTelefono(newCliente.getTelefono());
-            cliente.setEmpresa(respEmpresa.get());
-        }else{
+          //  cliente.setEmpresa(respEmpresa.get());
+        /*}else{
             return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-        }
+        }*/
         try {
             clienteRepository.save(cliente);
         }catch (Exception e){
@@ -157,10 +131,9 @@ public class ClienteServiceImpl implements ClienteService {
 
     public ResponseEntity updateClient(ClienteRequest newCliente){
         ClienteDto cliente = new ClienteDto();
-        EmpresaDto empresaDto = new EmpresaDto();
-
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newCliente.getIdEmpresa());
-        if(respEmpresa.isPresent()) {
+        
+        //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newCliente.getIdEmpresa());
+        //if(respEmpresa.isPresent()) {
             cliente.setId(newCliente.getId());
             cliente.setHabilitado(newCliente.getHabilitado());
             cliente.setApellido(newCliente.getApellido());
@@ -171,10 +144,10 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setNombre(newCliente.getNombre());
             cliente.setRut(newCliente.getRut());
             cliente.setTelefono(newCliente.getTelefono());
-            cliente.setEmpresa(respEmpresa.get());
-        }else{
+           // cliente.setEmpresa(respEmpresa.get());
+        /*}else{
             return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-        }
+        }*/
 
         clienteRepository.save(cliente);
 

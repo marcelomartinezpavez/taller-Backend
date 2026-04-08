@@ -12,6 +12,7 @@ public class OrdenTrabajoRequest {
     private String codigo;
     private long valorOt;
     private String estado;
+    private String kilometrajeVehiculoActual;
 
     private long idEmpresa;
     private List<DetalleRepuestoRequest> detalleRepuesto;
@@ -102,6 +103,14 @@ public class OrdenTrabajoRequest {
         this.estado = estado;
     }
 
+    public String getKilometrajeVehiculoActual() {
+        return kilometrajeVehiculoActual;
+    }
+
+    public void setKilometrajeVehiculoActual(String kilometrajeVehiculoActual) {
+        this.kilometrajeVehiculoActual = kilometrajeVehiculoActual;
+    }
+
     /**
      * @return List<TrabajosGeneralesRequest> return the trabajosGenerales
      */
@@ -128,6 +137,26 @@ public class OrdenTrabajoRequest {
      */
     public void setTrabajosTerceros(List<TrabajosTercerosRequest> trabajosTerceros) {
         this.trabajosTerceros = trabajosTerceros;
+    }
+
+    private String observaciones;
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    private Integer nivelCombustible;
+
+    public Integer getNivelCombustible() {
+        return nivelCombustible;
+    }
+
+    public void setNivelCombustible(Integer nivelCombustible) {
+        this.nivelCombustible = nivelCombustible;
     }
 
 }

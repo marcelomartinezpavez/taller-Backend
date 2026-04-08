@@ -22,13 +22,6 @@ public class ProveedorController {
         return proveedorService.getAllProveedor();
     }
 
-    @GetMapping(path = "/empresa/{idempresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody
-    ResponseEntity getAllProveedorPorEmpresa(@PathVariable long idempresa) {
-        return proveedorService.getAllProveedorPorEmpresa(idempresa);
-    }
-
     @GetMapping(value = "/{rut}", produces = "application/json")
     @CrossOrigin(origins = "*")
     public @ResponseBody

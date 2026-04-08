@@ -1,9 +1,7 @@
 package com.personal.taller.controller;
 
-import com.personal.taller.dto.EmpresaDto;
 import com.personal.taller.dto.ProveedorDto;
 import com.personal.taller.dto.RepuestoDto;
-import com.personal.taller.repository.EmpresaRepository;
 import com.personal.taller.repository.ProveedorRepository;
 import com.personal.taller.repository.RepuestoRepository;
 import com.personal.taller.request.RepuestoRequest;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Controller
 @RequestMapping("repuesto")
@@ -23,9 +20,6 @@ public class RepuestoController {
 
     @Autowired
     RepuestoRepository repuestoRepository;
-
-    @Autowired
-    EmpresaRepository empresaRepository;
 
     @Autowired
     ProveedorRepository proveedorRepository;
@@ -41,14 +35,14 @@ public class RepuestoController {
         for(RepuestoDto rep : repuestoDtoList){
             RepuestoDto repuesto = new RepuestoDto();
 
-            Optional<EmpresaDto> respEmpresa = empresaRepository.findById(rep.getEmpresa().getId());
-            Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitadoAndIdEmpresa(rep.getRutProveedor(), rep.getEmpresa().getId());
+            //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(rep.getEmpresa().getId());
+            Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitado(rep.getRutProveedor());
 
             if(!respProveedor.isPresent()){
                 return new ResponseEntity("Error Proveedor no existe",HttpStatus.BAD_REQUEST);
             }
 
-            if(respEmpresa.isPresent()) {
+           // if(respEmpresa.isPresent()) {
                 repuesto.setHabilitado(rep.getHabilitado());
                 repuesto.setNombre(rep.getNombre());
                 repuesto.setCodigo(rep.getCodigo());
@@ -57,13 +51,13 @@ public class RepuestoController {
                 repuesto.setAnio(rep.getAnio());
                 repuesto.setValor(rep.getValor());
 
-                EmpresaDto empresa = new EmpresaDto();
-                empresa.setId(respEmpresa.get().getId());
-                empresa.setDireccion(respEmpresa.get().getDireccion());
-                empresa.setRut(respEmpresa.get().getRut());
-                empresa.setNombre(respEmpresa.get().getNombre());
+                //EmpresaDto empresa = new EmpresaDto();
+                //empresa.setId(respEmpresa.get().getId());
+                //empresa.setDireccion(respEmpresa.get().getDireccion());
+                //empresa.setRut(respEmpresa.get().getRut());
+                //empresa.setNombre(respEmpresa.get().getNombre());
 
-                repuesto.setEmpresa(empresa);
+                //repuesto.setEmpresa(empresa);
 
                 Set<ProveedorDto> proveedorDtoSet = new HashSet<>();
                 ProveedorDto proveedor = new ProveedorDto();
@@ -76,15 +70,15 @@ public class RepuestoController {
                 proveedor.setCiudad(respProveedor.get().getCiudad());
                 proveedor.setTelefono(respProveedor.get().getTelefono());
                 proveedor.setEmail(respProveedor.get().getEmail());
-                proveedor.setEmpresa(empresa);
+                //proveedor.setEmpresa(empresa);
 
                 proveedorDtoSet.add(proveedor);
 
                 repuesto.setProveedor(proveedorDtoSet);
 
-            }else{
-                return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-            }
+            //}else{
+            //    return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
+            //}
             repuestoDtoListResp.add(repuesto);
         }
 
@@ -106,14 +100,14 @@ public class RepuestoController {
         }
         RepuestoDto resp = new RepuestoDto();
 
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(repuesto.getEmpresa().getId());
-        Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitadoAndIdEmpresa(repuesto.getRutProveedor(), repuesto.getEmpresa().getId());
+        //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(repuesto.getEmpresa().getId());
+        Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitado(repuesto.getRutProveedor());
 
         if(!respProveedor.isPresent()){
             return new ResponseEntity("Error Proveedor no existe",HttpStatus.BAD_REQUEST);
         }
 
-        if(respEmpresa.isPresent()) {
+        //if(respEmpresa.isPresent()) {
             resp.setHabilitado(repuesto.getHabilitado());
             resp.setNombre(repuesto.getNombre());
             resp.setCodigo(repuesto.getCodigo());
@@ -122,13 +116,14 @@ public class RepuestoController {
             resp.setAnio(repuesto.getAnio());
             resp.setValor(repuesto.getValor());
 
-            EmpresaDto empresa = new EmpresaDto();
+            /*EmpresaDto empresa = new EmpresaDto();
             empresa.setId(respEmpresa.get().getId());
             empresa.setDireccion(respEmpresa.get().getDireccion());
             empresa.setRut(respEmpresa.get().getRut());
             empresa.setNombre(respEmpresa.get().getNombre());
+            */
 
-            resp.setEmpresa(empresa);
+            //resp.setEmpresa(empresa);
 
             Set<ProveedorDto> proveedorDtoSet = new HashSet<>();
             ProveedorDto proveedor = new ProveedorDto();
@@ -141,16 +136,16 @@ public class RepuestoController {
             proveedor.setCiudad(respProveedor.get().getCiudad());
             proveedor.setTelefono(respProveedor.get().getTelefono());
             proveedor.setEmail(respProveedor.get().getEmail());
-            proveedor.setEmpresa(empresa);
+            //proveedor.setEmpresa(empresa);
 
             proveedorDtoSet.add(proveedor);
 
             resp.setProveedor(proveedorDtoSet);
-
+        /*
         }else{
             return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
         }
-
+        */
         return new ResponseEntity(resp, HttpStatus.OK);
     }
 
@@ -174,15 +169,15 @@ public class RepuestoController {
 
         for (RepuestoDto repuesto : repuestoDtoSet) {
             RepuestoDto resp = new RepuestoDto();
-            Optional<EmpresaDto> respEmpresa = empresaRepository.findById(repuesto.getEmpresa().getId());
-            Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitadoAndIdEmpresa(repuesto.getRutProveedor(), repuesto.getEmpresa().getId());
+            //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(repuesto.getEmpresa().getId());
+            Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitado(repuesto.getRutProveedor());
 
             if (!respProveedor.isPresent()) {
                 errorProveedor = true;
                 break;
             }
 
-            if (respEmpresa.isPresent()) {
+            //if (respEmpresa.isPresent()) {
                 resp.setId(repuesto.getId());
                 resp.setHabilitado(repuesto.getHabilitado());
                 resp.setNombre(repuesto.getNombre());
@@ -191,7 +186,7 @@ public class RepuestoController {
                 resp.setModelo(repuesto.getModelo());
                 resp.setAnio(repuesto.getAnio());
                 resp.setValor(repuesto.getValor());
-
+                /*
                 EmpresaDto empresa = new EmpresaDto();
                 empresa.setId(respEmpresa.get().getId());
                 empresa.setDireccion(respEmpresa.get().getDireccion());
@@ -199,7 +194,7 @@ public class RepuestoController {
                 empresa.setNombre(respEmpresa.get().getNombre());
 
                 resp.setEmpresa(empresa);
-
+                */
                 Set<ProveedorDto> proveedorDtoSet = new HashSet<>();
                 ProveedorDto proveedor = new ProveedorDto();
                 proveedor.setHabilitado(respProveedor.get().getHabilitado());
@@ -211,16 +206,16 @@ public class RepuestoController {
                 proveedor.setCiudad(respProveedor.get().getCiudad());
                 proveedor.setTelefono(respProveedor.get().getTelefono());
                 proveedor.setEmail(respProveedor.get().getEmail());
-                proveedor.setEmpresa(empresa);
+                //proveedor.setEmpresa(empresa);
 
                 proveedorDtoSet.add(proveedor);
 
                 resp.setProveedor(proveedorDtoSet);
                 repuestosDtoList.add(resp);
-            } else {
+            /*} else {
                 errorEmpresa = true;
                 break;
-            }
+            }*/
         }
 
         if(errorProveedor){
@@ -242,14 +237,14 @@ public class RepuestoController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<RepuestoDto> create(@RequestBody RepuestoRequest newRepuesto) {
         RepuestoDto repuesto = new RepuestoDto();
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newRepuesto.getIdEmpresa());
-        Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitadoAndIdEmpresa(newRepuesto.getRutProveedor(), newRepuesto.getIdEmpresa());
+        //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newRepuesto.getIdEmpresa());
+        Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitado(newRepuesto.getRutProveedor());
 
         if(!respProveedor.isPresent()){
             return new ResponseEntity("Error Proveedor no existe",HttpStatus.BAD_REQUEST);
         }
 
-        if(respEmpresa.isPresent()) {
+        //if(respEmpresa.isPresent()) {
             repuesto.setHabilitado(newRepuesto.getHabilitado());
             repuesto.setNombre(newRepuesto.getNombre());
             repuesto.setCodigo(newRepuesto.getCodigo());
@@ -259,7 +254,7 @@ public class RepuestoController {
             repuesto.setValor(newRepuesto.getValor());
             repuesto.setRutProveedor(respProveedor.get().getRut());
 
-            repuesto.setEmpresa(respEmpresa.get());
+            //repuesto.setEmpresa(respEmpresa.get());
 
             Set<ProveedorDto> proveedorDtoSet = new HashSet<>();
             ProveedorDto proveedor = new ProveedorDto();
@@ -273,14 +268,14 @@ public class RepuestoController {
             proveedor.setTelefono(respProveedor.get().getTelefono());
             proveedor.setEmail(respProveedor.get().getEmail());
 
-            proveedor.setEmpresa(respEmpresa.get());
+            //proveedor.setEmpresa(respEmpresa.get());
 
             proveedorDtoSet.add(respProveedor.get());
 
             repuesto.setProveedor(proveedorDtoSet);
-        }else{
+        /*}else{
             return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-        }
+        }*/
         try {
             repuestoRepository.save(repuesto);
         }catch (Exception e){
@@ -296,14 +291,14 @@ public class RepuestoController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<RepuestoDto> update(@RequestBody RepuestoRequest newRepuesto) {
         RepuestoDto repuesto = new RepuestoDto();
-        Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newRepuesto.getIdEmpresa());
-        Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitadoAndIdEmpresa(newRepuesto.getRutProveedor(), newRepuesto.getIdEmpresa());
+        //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newRepuesto.getIdEmpresa());
+        Optional<ProveedorDto> respProveedor = proveedorRepository.findByRutAndHabilitado(newRepuesto.getRutProveedor());
 
         if(!respProveedor.isPresent()){
             return new ResponseEntity("Error Proveedor no existe",HttpStatus.BAD_REQUEST);
         }
 
-        if(respEmpresa.isPresent()) {
+        //if(respEmpresa.isPresent()) {
             repuesto.setId(newRepuesto.getId());
             repuesto.setHabilitado(newRepuesto.getHabilitado());
             repuesto.setNombre(newRepuesto.getNombre());
@@ -314,7 +309,7 @@ public class RepuestoController {
             repuesto.setValor(newRepuesto.getValor());
             repuesto.setRutProveedor(respProveedor.get().getRut());
 
-            repuesto.setEmpresa(respEmpresa.get());
+            //repuesto.setEmpresa(respEmpresa.get());
 
             Set<ProveedorDto> proveedorDtoSet = new HashSet<>();
             ProveedorDto proveedor = new ProveedorDto();
@@ -328,14 +323,14 @@ public class RepuestoController {
             proveedor.setTelefono(respProveedor.get().getTelefono());
             proveedor.setEmail(respProveedor.get().getEmail());
 
-            proveedor.setEmpresa(respEmpresa.get());
+            //proveedor.setEmpresa(respEmpresa.get());
 
             proveedorDtoSet.add(respProveedor.get());
 
             repuesto.setProveedor(proveedorDtoSet);
-        }else{
+        /*}else{
             return new ResponseEntity("Error Empresa no existe",HttpStatus.BAD_REQUEST);
-        }
+        }*/
         try {
             repuestoRepository.save(repuesto);
         }catch (Exception e){

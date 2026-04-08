@@ -1,5 +1,6 @@
 package com.personal.taller.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -23,8 +24,9 @@ public class DetalleRepuestosDto implements Serializable {
     @Column(name = "total")
     private long total;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordenTrabajo_id")
+    @JsonBackReference
     private OrdenTrabajoDto ordenTrabajo;
 
     @OneToOne(fetch = FetchType.LAZY)

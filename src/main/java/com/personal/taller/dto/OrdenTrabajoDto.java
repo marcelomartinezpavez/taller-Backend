@@ -1,9 +1,11 @@
 package com.personal.taller.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @JsonIgnoreProperties({ "hibernateLazyInitializer" })
@@ -13,8 +15,8 @@ public class OrdenTrabajoDto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(name = "numeroOrden")
-    private String numeroOrden;
+    @Column(name = "numeroOrden", unique = true, nullable = false)
+    private long numeroOrden;
     @Column(name = "habilitado")
     private boolean habilitado;
     @Column(name = "fechaIngreso")
@@ -31,25 +33,34 @@ public class OrdenTrabajoDto implements Serializable {
     private String estado;
     @Column(name = "fechaCerrado")
     private String fechaCerrado;
+    @Column(name = "kilometrajeVehiculoActual")
+    private String kilometrajeVehiculoActual;
 
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = 4000)
     private String observaciones;
+
+    @Column(name = "nivelCombustible")
+    private Integer nivelCombustible;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehiculo_id", referencedColumnName = "id")
     private VehiculoDto vehiculo;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(name = "trabajosGenerales")
-    private Set<TrabajosGeneralesDto> trabajosGenerales;
+@OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
+               cascade = CascadeType.ALL, orphanRemoval = true)
+               @JsonManagedReference
+    private Set<TrabajosGeneralesDto> trabajosGenerales = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(name = "detalleRepuestos")
-    private Set<DetalleRepuestosDto> detalleRepuestos;
+    @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
+               cascade = CascadeType.ALL, orphanRemoval = true)
+               @JsonManagedReference
+    private Set<DetalleRepuestosDto> detalleRepuestos = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(name = "trabajosTerceros")
-    private Set<TrabajosTercerosDto> trabajosTerceros;
+    @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
+               cascade = CascadeType.ALL, orphanRemoval = true)
+               @JsonManagedReference
+    private Set<TrabajosTercerosDto> trabajosTerceros = new HashSet<>();
+
 
     // @OneToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "vehiculo_id")
@@ -59,18 +70,24 @@ public class OrdenTrabajoDto implements Serializable {
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     private ClienteDto cliente;
 
-    // @OneToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "rut_cliente")
-    // private ClienteDto rut_cliente;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id")
-    private EmpresaDto empresa;
+    @PrePersist
+    public void prePersist() {
+        // cuando se inserta, el id aún no está disponible
+        // pero puedes asignar numeroOrden después en el servicio
+    }
+
+    @PostPersist
+    public void postPersist() {
+        // aquí ya tienes el id generado
+        this.numeroOrden = this.id;
+    }
+
 
     public OrdenTrabajoDto() {
     }
 
-    public OrdenTrabajoDto(long id, boolean habilitado, String numeroOrden, String fechaIngreso, String rutCliente,
+    public OrdenTrabajoDto(long id, boolean habilitado, long numeroOrden, String fechaIngreso, String rutCliente,
             String patenteVehiculo, Set<DetalleRepuestosDto> detalleRepuestos, String codigoRepuestos) {
         super();
         this.id = id;
@@ -91,11 +108,11 @@ public class OrdenTrabajoDto implements Serializable {
         this.id = id;
     }
 
-    public String getNumeroOrden() {
+    public long getNumeroOrden() {
         return numeroOrden;
     }
 
-    public void setNumeroOrden(String numeroOrden) {
+    public void setNumeroOrden(long numeroOrden) {
         this.numeroOrden = numeroOrden;
     }
 
@@ -167,14 +184,6 @@ public class OrdenTrabajoDto implements Serializable {
         this.vehiculo = vehiculo;
     }
 
-    public EmpresaDto getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(EmpresaDto empresa) {
-        this.empresa = empresa;
-    }
-
     public ClienteDto getCliente() {
         return cliente;
     }
@@ -203,6 +212,14 @@ public class OrdenTrabajoDto implements Serializable {
         this.fechaCerrado = fechaCerrado;
     }
 
+    public String getKilometrajeVehiculoActual() {
+        return kilometrajeVehiculoActual;
+    }
+
+    public void setKilometrajeVehiculoActual(String kilometrajeVehiculoActual) {
+        this.kilometrajeVehiculoActual = kilometrajeVehiculoActual;
+    }
+
     /**
      * @return String return the observaciones
      */
@@ -215,6 +232,14 @@ public class OrdenTrabajoDto implements Serializable {
      */
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public Integer getNivelCombustible() {
+        return nivelCombustible;
+    }
+
+    public void setNivelCombustible(Integer nivelCombustible) {
+        this.nivelCombustible = nivelCombustible;
     }
 
     /**

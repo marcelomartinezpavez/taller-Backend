@@ -22,12 +22,6 @@ public class ClienteController {
         return clienteService.getAll();
     }
 
-    @GetMapping(path = "/empresa/{idempresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getAllClientePorEmpresa(@PathVariable long idempresa) {
-        return clienteService.getClientByCompany(idempresa);
-    }
-
     @GetMapping(value = "/{rut}", produces = "application/json")
     @CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity getCliente(@PathVariable String rut) {

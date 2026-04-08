@@ -33,9 +33,9 @@ public class ProveedorDto implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY)
+/*    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
-    private EmpresaDto empresa;
+    private EmpresaDto empresa;*/
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Column(name = "repuesto")
@@ -136,14 +136,6 @@ public class ProveedorDto implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public EmpresaDto getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(EmpresaDto empresa) {
-        this.empresa = empresa;
     }
 
     public Set<RepuestoDto> getRepuesto() {

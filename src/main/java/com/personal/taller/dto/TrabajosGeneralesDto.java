@@ -1,13 +1,6 @@
 package com.personal.taller.dto;
 
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -33,8 +26,9 @@ public class TrabajosGeneralesDto {
     @Column(name = "prestadorServicio")
     private String prestadorServicio;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordenTrabajo_id")
+    @JsonBackReference
     private OrdenTrabajoDto ordenTrabajo;
 
     public TrabajosGeneralesDto() {

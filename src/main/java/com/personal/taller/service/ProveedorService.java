@@ -8,8 +8,6 @@ public interface ProveedorService {
 
     ResponseEntity getAllProveedor();
 
-    ResponseEntity getAllProveedorPorEmpresa(long idempresa);
-
     ResponseEntity getProveedor(String rut);
 
     ResponseEntity create(ProveedorRequest newProveedor);

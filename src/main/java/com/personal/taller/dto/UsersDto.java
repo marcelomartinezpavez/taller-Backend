@@ -10,10 +10,6 @@ public class UsersDto implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id")
-    private EmpresaDto empresa;
-
     @Column(name = "users")
     private String users;
 
@@ -34,14 +30,6 @@ public class UsersDto implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public EmpresaDto getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(EmpresaDto empresa) {
-        this.empresa = empresa;
     }
 
     public String getUsers() {

@@ -3,6 +3,7 @@ package com.personal.taller.request;
 public class Users {
     private String users;
     private String pass;
+    private String rol;
 
     public String getUsers() {
         return users;
@@ -19,4 +20,14 @@ public class Users {
     public void setPass(String pass) {
         this.pass = pass;
     }
+
+
+    public String getRol() {
+        return this.rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
 }

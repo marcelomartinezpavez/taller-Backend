@@ -7,7 +7,7 @@ public interface ClienteService {
 
     ResponseEntity getAll();
 
-    ResponseEntity getClientByCompany(long idempresa);
+    ResponseEntity getClientByCompany();
 
     ResponseEntity getClientByRut(String rut);
 

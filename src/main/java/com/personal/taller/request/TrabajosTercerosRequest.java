@@ -2,110 +2,90 @@ package com.personal.taller.request;
 
 public class TrabajosTercerosRequest {
 
-    private String descripcion;
-    private long porcentajeRecargo;
-    private long valor;
-    private long cantidad;
-    private long total;
-    private long repuesto_id;
-    private String prestadorServicio;
+    private String descripcionTercero;
+    private long porcentajeRecargoTercero;
+    private long valorTercero;
+    private long totalTercero;
+    private String prestadorServicioTercero;
 
     /**
      * @return String return the descripcion
      */
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescripcionTercero() {
+        return descripcionTercero;
     }
 
     /**
      * @param descripcion the descripcion to set
      */
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescripcionTercero(String descripcionTercero) {
+        this.descripcionTercero = descripcionTercero;
     }
 
     /**
      * @return long return the porcentajeRecargo
      */
-    public long getPorcentajeRecargo() {
-        return porcentajeRecargo;
+    public long getPorcentajeRecargoTercero() {
+        return porcentajeRecargoTercero;
     }
 
     /**
      * @param porcentajeRecargo the porcentajeRecargo to set
      */
-    public void setPorcentajeRecargo(long porcentajeRecargo) {
-        this.porcentajeRecargo = porcentajeRecargo;
+    public void setPorcentajeRecargoTercero(long porcentajeRecargoTercero) {
+        this.porcentajeRecargoTercero = porcentajeRecargoTercero;
     }
 
     /**
      * @return long return the valor
      */
-    public long getValor() {
-        return valor;
+    public long getValorTercero() {
+        return valorTercero;
     }
 
     /**
      * @param valor the valor to set
      */
-    public void setValor(long valor) {
-        this.valor = valor;
-    }
-
-    /**
-     * @return long return the cantidad
-     */
-    public long getCantidad() {
-        return cantidad;
-    }
-
-    /**
-     * @param cantidad the cantidad to set
-     */
-    public void setCantidad(long cantidad) {
-        this.cantidad = cantidad;
+    public void setValorTercero(long valorTercero) {
+        this.valorTercero = valorTercero;
     }
 
     /**
      * @return long return the total
      */
-    public long getTotal() {
-        return total;
+    public long getTotalTercero() {
+        return totalTercero;
     }
 
     /**
      * @param total the total to set
      */
-    public void setTotal(long total) {
-        this.total = total;
-    }
-
-    /**
-     * @return long return the repuesto_id
-     */
-    public long getRepuesto_id() {
-        return repuesto_id;
-    }
-
-    /**
-     * @param repuesto_id the repuesto_id to set
-     */
-    public void setRepuesto_id(long repuesto_id) {
-        this.repuesto_id = repuesto_id;
+    public void setTotalTercero(long totalTercero) {
+        this.totalTercero = totalTercero;
     }
 
     /**
      * @return String return the prestadorServicio
      */
-    public String getPrestadorServicio() {
-        return prestadorServicio;
+    public String getPrestadorServicioTercero() {
+        return prestadorServicioTercero;
     }
 
     /**
      * @param prestadorServicio the prestadorServicio to set
      */
-    public void setPrestadorServicio(String prestadorServicio) {
-        this.prestadorServicio = prestadorServicio;
+    public void setPrestadorServicioTercero(String prestadorServicioTercero) {
+        this.prestadorServicioTercero = prestadorServicioTercero;
+    }
+
+    private long cantidadTercero;
+
+    public long getCantidadTercero() {
+        return cantidadTercero;
+    }
+
+    public void setCantidadTercero(long cantidadTercero) {
+        this.cantidadTercero = cantidadTercero;
     }
 
 }

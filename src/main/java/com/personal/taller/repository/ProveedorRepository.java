@@ -21,14 +21,6 @@ public interface ProveedorRepository extends JpaRepository<ProveedorDto, Long> {
     @Query(value = "select * from proveedores p where p.rut = :rut", nativeQuery = true)
     Optional<ProveedorDto> findByRutAndHabilitado(String rut);
 
-    @Query(value = "select * from proveedores p where p.rut = :rut and p.empresa_id = :idEmpresa", nativeQuery = true)
-    Optional<ProveedorDto> findByRutAndHabilitadoAndIdEmpresa(String rut, long idEmpresa);
-
-
-    @Query(value = "select * from proveedores p where p.empresa_id = :idEmpresa ", nativeQuery = true)
-    List<ProveedorDto> findByEmpresaId(long idEmpresa);
-
-
     //@Query("{rut:'?0'}")
     ProveedorDto findByRut(String rut);
 

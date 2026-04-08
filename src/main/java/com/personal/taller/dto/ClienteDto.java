@@ -43,10 +43,6 @@ public class ClienteDto implements Serializable {
     @Column(name = "vehiculo")
     private Set<VehiculoDto> vehiculo;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "empresa_id")
-    private EmpresaDto empresa;
-
     public ClienteDto() {
     }
 
@@ -162,11 +158,5 @@ public class ClienteDto implements Serializable {
         this.vehiculo = vehiculo;
     }
 
-    public EmpresaDto getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(EmpresaDto empresa) {
-        this.empresa = empresa;
-    }
+  
 }

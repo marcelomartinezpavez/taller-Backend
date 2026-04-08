@@ -19,8 +19,6 @@ public class VehiculoRequest {
     private String color;
     private String kilometraje;
 
-    private long id_empresa;
-
     private Set<ClienteDto> cliente;
 
     private Set<OrdenTrabajoDto> ordenTrabajo;
@@ -129,11 +127,4 @@ public class VehiculoRequest {
         this.ordenTrabajo = ordenTrabajo;
     }
 
-    public long getId_empresa() {
-        return id_empresa;
-    }
-
-    public void setId_empresa(long id_empresa) {
-        this.id_empresa = id_empresa;
-    }
 }

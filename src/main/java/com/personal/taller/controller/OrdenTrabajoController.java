@@ -24,9 +24,6 @@ public class OrdenTrabajoController {
     OrdenTrabajoRepository ordenTrabajoRepository;
 
     @Autowired
-    EmpresaRepository empresaRepository;
-
-    @Autowired
     VehiculoRepository vehiculoRepository;
 
     @Autowired
@@ -46,121 +43,72 @@ public class OrdenTrabajoController {
 
     @GetMapping(path = "/all", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getAllOrdenTrabajo() {
+    public @ResponseBody ResponseEntity<?> getAllOrdenTrabajo() {
         try {
             System.out.println("getAll Orden Trabajo");
             List<OrdenTrabajoDto> ot = ordenTrabajoRepository.findAll();
-            return new ResponseEntity(ot, HttpStatus.OK);
+            return new ResponseEntity<>(ot, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar todos las ordenes de trabajo",
+            return new ResponseEntity<>("Error Interno al buscar todos las ordenes de trabajo",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping(value = "/orden/{numeroOrden}", produces = "application/json")
+    @GetMapping(value = "/{numeroOrden}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajo(@PathVariable String numeroOrden) {
+    public @ResponseBody ResponseEntity<?> getOrdenTrabajo(@PathVariable Long numeroOrden) {
         try {
             OrdenTrabajoDto ordenTrabajo = ordenTrabajoRepository.findByNumeroOrden(numeroOrden);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
+            if (ordenTrabajo == null) {
+                return new ResponseEntity<>("No existe orden de trabajo para el numero indicado", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(ordenTrabajo, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por numero de orden", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping(value = "/orden/{numeroOrden}/empresa/{idEmpresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajoByNumAndEmp(@PathVariable String numeroOrden,
-            @PathVariable long idEmpresa) {
-        try {
-            OrdenTrabajoDto ordenTrabajo = ordenTrabajoRepository.findByNumeroOrdenAndEmpresa(numeroOrden, idEmpresa);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por numero de orden", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error Interno al buscar por numero de orden", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(value = "/patente/{patente}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajoPatente(@PathVariable String patente) {
+    public @ResponseBody ResponseEntity<?> getOrdenTrabajoPatente(@PathVariable String patente) {
         try {
             List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByPatenteVehiculo(patente);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
+            return new ResponseEntity<>(ordenTrabajo, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por patente", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping(value = "/patente/{patente}/empresa/{idEmpresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajoPatenteAndEmpresa(@PathVariable String patente,
-            @PathVariable long idEmpresa) {
-        try {
-            List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByPatenteVehiculoAndEmpresa(patente,
-                    idEmpresa);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por patente", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error Interno al buscar por patente", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(value = "/cliente/{rut}", produces = "application/json")
     @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajoCliente(@PathVariable String rut) {
+    public @ResponseBody ResponseEntity<?> getOrdenTrabajoCliente(@PathVariable String rut) {
         try {
             List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByRutCliente(rut);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
+            return new ResponseEntity<>(ordenTrabajo, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por cliente", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping(value = "/cliente/{rut}/empresa/{idEmpresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajoCliente(@PathVariable String rut, @PathVariable long idEmpresa) {
-        try {
-            List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByRutClienteAndEmpresa(rut, idEmpresa);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por cliente", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping(value = "/empresa/{idEmpresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getOrdenTrabajoEmpresa(@PathVariable long idEmpresa) {
-        try {
-            List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByIdEmpresa(idEmpresa);
-            return new ResponseEntity(ordenTrabajo, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity("Error Interno al buscar por empresa", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error Interno al buscar por cliente", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
-    public ResponseEntity<OrdenTrabajoDto> create(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
+    public ResponseEntity<?> create(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
         System.out.println("INSERT OT");
 
         OrdenTrabajoDto otResponse = new OrdenTrabajoDto();
         try {
-            EmpresaDto empresaDto = empresaRepository.getById(newOrdenTrabajo.getIdEmpresa());
-            VehiculoDto vehiculoDto = vehiculoRepository.findByPatenteAndEmpresa(newOrdenTrabajo.getPatenteVehiculo(),
-                    newOrdenTrabajo.getIdEmpresa());
+            VehiculoDto vehiculoDto = vehiculoRepository.findByPatente(newOrdenTrabajo.getPatenteVehiculo());
+            if (vehiculoDto == null) {
+                return new ResponseEntity<>("Vehiculo no existe", HttpStatus.BAD_REQUEST);
+            }
             Optional<ClienteDto> clienteDto = clienteRepository
-                    .findByRutAndHabilitadoAndEmpresa(newOrdenTrabajo.getRutCliente(), newOrdenTrabajo.getIdEmpresa());
-
-            EmpresaDto empresa = new EmpresaDto();
-            empresa.setNombre(empresaDto.getNombre());
-            empresa.setDireccion(empresaDto.getDireccion());
-            empresa.setRut(empresaDto.getRut());
-            empresa.setId(empresaDto.getId());
+                    .findByRutAndHabilitado(newOrdenTrabajo.getRutCliente());
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
             String fechaActual = dtf.format(LocalDateTime.now());
 
             otResponse.setHabilitado(true);
-            otResponse.setEstado("ABIERTAS");
+            otResponse.setEstado("ABIERTA");
             otResponse.setFechaIngreso(fechaActual);
             otResponse.setRutCliente(newOrdenTrabajo.getRutCliente());
             ClienteDto cl = new ClienteDto();
@@ -175,17 +123,19 @@ public class OrdenTrabajoController {
                 cl.setCiudad(clienteDto.get().getCiudad());
                 cl.setTelefono(clienteDto.get().getTelefono());
                 cl.setEmail(clienteDto.get().getEmail());
-                cl.setEmpresa(empresa);
                 otResponse.setCliente(clienteDto.get());
             } else {
-                return new ResponseEntity("Cliente no existe", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Cliente no existe", HttpStatus.BAD_REQUEST);
             }
 
             otResponse.setPatenteVehiculo(newOrdenTrabajo.getPatenteVehiculo());
             otResponse.setCodigo(newOrdenTrabajo.getCodigo());
             otResponse.setValorOt(newOrdenTrabajo.getValorOt());
+            otResponse.setKilometrajeVehiculoActual(newOrdenTrabajo.getKilometrajeVehiculoActual());
+            otResponse.setNivelCombustible(newOrdenTrabajo.getNivelCombustible());
+            otResponse.setObservaciones(newOrdenTrabajo.getObservaciones());
 
-            otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
+            //otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
 
             VehiculoDto vehiculo = new VehiculoDto();
             vehiculo.setId(vehiculoDto.getId());
@@ -207,10 +157,9 @@ public class OrdenTrabajoController {
             otResponse.setVehiculo(vehiculo);
             otResponse.setVehiculo(vehiculoDto);
 
-            otResponse.setEmpresa(empresa);
-
-            Set<DetalleRepuestosDto> detalleSet = new HashSet();
-            newOrdenTrabajo.getDetalleRepuesto().forEach(detalle -> {
+            Set<DetalleRepuestosDto> detalleSet = new HashSet<>();
+            if (newOrdenTrabajo.getDetalleRepuesto() != null) {
+                newOrdenTrabajo.getDetalleRepuesto().forEach(detalle -> {
                 DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
                 detalleDto.setDescripcion(detalle.getDescripcion());
                 detalleDto.setPorcentajeRecargo(detalle.getPorcentajeRecargo());
@@ -231,7 +180,6 @@ public class OrdenTrabajoController {
                         repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
                         repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
                         repuestoDto.setValor(repuestoDtoOptional.get().getValor());
-                        repuestoDto.setEmpresa(empresa);
                         // Falta agregar proveedor a repuestoDto
                     }
                     detalleDto.setRepuesto(repuestoDto);
@@ -239,47 +187,74 @@ public class OrdenTrabajoController {
                 detalleRepository.save(detalleDto);
                 detalleSet.add(detalleDto);
             });
+            }
             otResponse.setDetalle(detalleSet);
 
-            Set<TrabajosGeneralesDto> trabajosGeneralesSet = new HashSet();
-            newOrdenTrabajo.getTrabajosGenerales().forEach(trabajosGenerales -> {
+            Set<TrabajosGeneralesDto> trabajosGeneralesSet = new HashSet<>();
+            if (newOrdenTrabajo.getTrabajosGenerales() != null) {
+                newOrdenTrabajo.getTrabajosGenerales().forEach(trabajosGenerales -> {
                 TrabajosGeneralesDto trabajosGeneralesDto = new TrabajosGeneralesDto();
-                trabajosGeneralesDto.setDescripcion(trabajosGenerales.getDescripcion());
-                trabajosGeneralesDto.setPorcentajeRecargo(trabajosGenerales.getPorcentajeRecargo());
-                trabajosGeneralesDto.setValor(trabajosGenerales.getValor());
-                trabajosGeneralesDto.setCantidad(1);
-                trabajosGeneralesDto.setTotal(trabajosGenerales.getTotal());
-                trabajosGeneralesDto.setPrestadorServicio(trabajosGenerales.getPrestadorServicio());
-                trabajosGeneralesDto.setOrdenTrabajo(otResponse);
+                trabajosGeneralesDto.setDescripcion(trabajosGenerales.getDescripcionGeneral());
+                trabajosGeneralesDto.setPorcentajeRecargo(trabajosGenerales.getPorcentajeRecargoGeneral());
+                trabajosGeneralesDto.setValor(trabajosGenerales.getValorGeneral());
+                long cantidad = trabajosGenerales.getCantidadGeneral() <= 0 ? 1 : trabajosGenerales.getCantidadGeneral();
+                trabajosGeneralesDto.setCantidad(cantidad);
+                trabajosGeneralesDto.setTotal(trabajosGenerales.getValorGeneral() * cantidad);
+                trabajosGeneralesDto.setPrestadorServicio(trabajosGenerales.getPrestadorServicioGeneral());
+                //trabajosGeneralesDto.setOrdenTrabajo(otResponse);
 
                 trabajosGeneralesRepository.save(trabajosGeneralesDto);
 
                 trabajosGeneralesSet.add(trabajosGeneralesDto);
             });
+            }
             otResponse.setTrabajosGenerales(trabajosGeneralesSet);
 
-            Set<TrabajosTercerosDto> trabajosTercerosSet = new HashSet();
-            newOrdenTrabajo.getTrabajosTerceros().forEach(trabajosTerceros -> {
+            Set<TrabajosTercerosDto> trabajosTercerosSet = new HashSet<>();
+            if (newOrdenTrabajo.getTrabajosTerceros() != null) {
+                newOrdenTrabajo.getTrabajosTerceros().forEach(trabajosTerceros -> {
                 TrabajosTercerosDto trabajosTercerosDto = new TrabajosTercerosDto();
-                trabajosTercerosDto.setDescripcion(trabajosTerceros.getDescripcion());
-                trabajosTercerosDto.setPorcentajeRecargo(trabajosTerceros.getPorcentajeRecargo());
-                trabajosTercerosDto.setValor(trabajosTerceros.getValor());
-                trabajosTercerosDto.setCantidad(1);
-                trabajosTercerosDto.setTotal(trabajosTerceros.getTotal());
-                trabajosTercerosDto.setPrestadorServicio(trabajosTerceros.getPrestadorServicio());
-                trabajosTercerosDto.setOrdenTrabajo(otResponse);
+                trabajosTercerosDto.setDescripcion(trabajosTerceros.getDescripcionTercero());
+                trabajosTercerosDto.setPorcentajeRecargo(trabajosTerceros.getPorcentajeRecargoTercero());
+                trabajosTercerosDto.setValor(trabajosTerceros.getValorTercero());
+                long cantidad = trabajosTerceros.getCantidadTercero() <= 0 ? 1 : trabajosTerceros.getCantidadTercero();
+                trabajosTercerosDto.setCantidad(cantidad);
+                trabajosTercerosDto.setTotal(trabajosTerceros.getValorTercero() * cantidad);
+                trabajosTercerosDto.setPrestadorServicio(trabajosTerceros.getPrestadorServicioTercero());
+                //trabajosTercerosDto.setOrdenTrabajo(otResponse);
 
                 trabajosTercerosRepository.save(trabajosTercerosDto);
 
                 trabajosTercerosSet.add(trabajosTercerosDto);
             });
+            }
             otResponse.setTrabajosTerceros(trabajosTercerosSet);
 
-            ordenTrabajoRepository.save(otResponse);
+            OrdenTrabajoDto otNew = ordenTrabajoRepository.save(otResponse);
+            otNew.setCodigo(String.valueOf(otNew.getId()));
+            otNew.setNumeroOrden(otNew.getId());
+            ordenTrabajoRepository.save(otNew);
+
+            detalleSet.forEach(detalle -> {
+                detalle.setOrdenTrabajo(otNew);
+                detalleRepository.save(detalle);
+            });
+            
+            trabajosGeneralesSet.forEach(trabajoGeneral -> {
+                trabajoGeneral.setOrdenTrabajo(otNew); 
+                trabajosGeneralesRepository.save(trabajoGeneral);
+            });
+
+
+
+            trabajosTercerosSet.forEach(trabajoTercero -> {
+                trabajoTercero.setOrdenTrabajo(otNew);
+                trabajosTercerosRepository.save(trabajoTercero);
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
-            new ResponseEntity("Error al crear orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al crear orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(otResponse, HttpStatus.CREATED);
 
@@ -287,28 +262,22 @@ public class OrdenTrabajoController {
 
     @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
-    public ResponseEntity<OrdenTrabajoDto> update(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
-        OrdenTrabajoDto otResponse = new OrdenTrabajoDto();
-
+    public ResponseEntity<?> update(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
         try {
-            EmpresaDto empresaDto = empresaRepository.getById(newOrdenTrabajo.getIdEmpresa());
-            VehiculoDto vehiculoDto = vehiculoRepository.findByPatenteAndEmpresa(newOrdenTrabajo.getPatenteVehiculo(),
-                    newOrdenTrabajo.getIdEmpresa());
+            VehiculoDto vehiculoDto = vehiculoRepository.findByPatente(newOrdenTrabajo.getPatenteVehiculo());
+            if (vehiculoDto == null) {
+                return new ResponseEntity<>("Vehiculo no existe", HttpStatus.BAD_REQUEST);
+            }
             Optional<ClienteDto> clienteDto = clienteRepository
-                    .findByRutAndHabilitadoAndEmpresa(newOrdenTrabajo.getRutCliente(), newOrdenTrabajo.getIdEmpresa());
+                    .findByRutAndHabilitado(newOrdenTrabajo.getRutCliente());
 
             Optional<OrdenTrabajoDto> ot = ordenTrabajoRepository.findById(newOrdenTrabajo.getId());
 
             if (!ot.isPresent()) {
-                return new ResponseEntity("No existe orden de trabajo para editar", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("No existe orden de trabajo para editar", HttpStatus.NOT_FOUND);
             }
 
-            EmpresaDto empresa = new EmpresaDto();
-            empresa.setNombre(empresaDto.getNombre());
-            empresa.setDireccion(empresaDto.getDireccion());
-            empresa.setRut(empresaDto.getRut());
-            empresa.setId(empresaDto.getId());
-
+            OrdenTrabajoDto otResponse = ot.get();
             otResponse.setId(newOrdenTrabajo.getId());
             otResponse.setHabilitado(newOrdenTrabajo.getHabilitado());
             otResponse.setEstado(newOrdenTrabajo.getEstado());
@@ -317,7 +286,6 @@ public class OrdenTrabajoController {
                 String fechaCerrado = dtf.format(LocalDateTime.now());
                 otResponse.setFechaCerrado(fechaCerrado);
             }
-            otResponse.setFechaIngreso(ot.get().getFechaIngreso());
             otResponse.setRutCliente(newOrdenTrabajo.getRutCliente());
             ClienteDto cl = new ClienteDto();
             if (clienteDto.isPresent()) {
@@ -331,17 +299,19 @@ public class OrdenTrabajoController {
                 cl.setCiudad(clienteDto.get().getCiudad());
                 cl.setTelefono(clienteDto.get().getTelefono());
                 cl.setEmail(clienteDto.get().getEmail());
-                cl.setEmpresa(empresa);
                 otResponse.setCliente(clienteDto.get());
             } else {
-                return new ResponseEntity("Cliente no existe", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Cliente no existe", HttpStatus.BAD_REQUEST);
             }
 
             otResponse.setPatenteVehiculo(newOrdenTrabajo.getPatenteVehiculo());
             otResponse.setCodigo(newOrdenTrabajo.getCodigo());
             otResponse.setValorOt(newOrdenTrabajo.getValorOt());
+            otResponse.setKilometrajeVehiculoActual(newOrdenTrabajo.getKilometrajeVehiculoActual());
+            otResponse.setNivelCombustible(newOrdenTrabajo.getNivelCombustible());
+            otResponse.setObservaciones(newOrdenTrabajo.getObservaciones());
 
-            otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
+            //otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
 
             VehiculoDto vehiculo = new VehiculoDto();
             vehiculo.setId(vehiculoDto.getId());
@@ -363,10 +333,9 @@ public class OrdenTrabajoController {
             otResponse.setVehiculo(vehiculo);
             otResponse.setVehiculo(vehiculoDto);
 
-            otResponse.setEmpresa(empresa);
-
-            Set<DetalleRepuestosDto> detalleSet = new HashSet();
-            newOrdenTrabajo.getDetalleRepuesto().forEach(detalle -> {
+            Set<DetalleRepuestosDto> detalleSet = new HashSet<>();
+            if (newOrdenTrabajo.getDetalleRepuesto() != null) {
+                newOrdenTrabajo.getDetalleRepuesto().forEach(detalle -> {
                 DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
                 detalleDto.setDescripcion(detalle.getDescripcion());
                 detalleDto.setPorcentajeRecargo(detalle.getPorcentajeRecargo());
@@ -387,43 +356,46 @@ public class OrdenTrabajoController {
                         repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
                         repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
                         repuestoDto.setValor(repuestoDtoOptional.get().getValor());
-                        repuestoDto.setEmpresa(empresa);
-
                         // Falta agregar proveedor a repuestoDto
                     }
                     detalleDto.setRepuesto(repuestoDto);
 
                 }
-
-                detalleRepository.save(detalleDto);
                 detalleSet.add(detalleDto);
 
             });
-            otResponse.setDetalle(detalleSet);
-            ordenTrabajoRepository.save(otResponse);
-
+            }
+            otResponse.getDetalleRepuestosDtos().clear();
+            detalleSet.forEach(detalle -> {
+                detalle.setOrdenTrabajo(otResponse);
+                otResponse.getDetalleRepuestosDtos().add(detalle);
+            });
+            OrdenTrabajoDto otUpdated = ordenTrabajoRepository.save(otResponse);
+            
+            return new ResponseEntity<>(otUpdated, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            new ResponseEntity("Error al actualizar orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al actualizar orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(otResponse, HttpStatus.OK);
 
     }
 
     @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "*")
-    public ResponseEntity<OrdenTrabajoDto> delete(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
-        OrdenTrabajoDto otResponse = new OrdenTrabajoDto();
+    public ResponseEntity<?> delete(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
         try {
-            OrdenTrabajoDto ot = ordenTrabajoRepository.findById(newOrdenTrabajo.getId()).get();
+            Optional<OrdenTrabajoDto> otOptional = ordenTrabajoRepository.findById(newOrdenTrabajo.getId());
+            if (!otOptional.isPresent()) {
+                return new ResponseEntity<>("No existe orden de trabajo para eliminar", HttpStatus.NOT_FOUND);
+            }
+            OrdenTrabajoDto ot = otOptional.get();
             ot.setHabilitado(false);
             ordenTrabajoRepository.save(ot);
             return new ResponseEntity<>(ot, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            new ResponseEntity("Error al eliminar orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al eliminar orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
 }

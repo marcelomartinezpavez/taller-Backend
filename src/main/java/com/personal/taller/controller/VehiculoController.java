@@ -1,7 +1,6 @@
 package com.personal.taller.controller;
 
 import com.personal.taller.dto.ClienteDto;
-import com.personal.taller.dto.EmpresaDto;
 import com.personal.taller.dto.VehiculoDto;
 import com.personal.taller.repository.ClienteRepository;
 import com.personal.taller.repository.VehiculoRepository;
@@ -90,13 +89,6 @@ public class VehiculoController {
                 clte.setEmail(clienteDto.getEmail());
                 clte.setTelefono(clienteDto.getTelefono());
 
-                EmpresaDto empresaDto = new EmpresaDto();
-                empresaDto.setId(clienteDto.getEmpresa().getId());
-                empresaDto.setNombre(clienteDto.getEmpresa().getNombre());
-                empresaDto.setRut(clienteDto.getEmpresa().getRut());
-                empresaDto.setDireccion(clienteDto.getEmpresa().getDireccion());
-
-                clte.setEmpresa(empresaDto);
                 clienteDtoSet.add(clte);
             }
 
@@ -142,66 +134,10 @@ public class VehiculoController {
             clte.setEmail(clienteDto.getEmail());
             clte.setTelefono(clienteDto.getTelefono());
 
-            EmpresaDto empresaDto = new EmpresaDto();
-            empresaDto.setId(clienteDto.getEmpresa().getId());
-            empresaDto.setNombre(clienteDto.getEmpresa().getNombre());
-            empresaDto.setRut(clienteDto.getEmpresa().getRut());
-            empresaDto.setDireccion(clienteDto.getEmpresa().getDireccion());
-
-            clte.setEmpresa(empresaDto);
             clienteDtoSet.add(clte);
         }
 
         vehResp.setCliente(clienteDtoSet);
-        return new ResponseEntity(vehResp, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/{patente}/empresa/{empresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
-    public @ResponseBody ResponseEntity getVehiculoByEmpresa(@PathVariable String patente, @PathVariable long empresa) {
-        VehiculoDto vehiculo = vehiculoRepository.findByPatenteAndEmpresa(patente, empresa);
-        if (vehiculo == null) {
-            return new ResponseEntity("Vehiculo no se encuentra", HttpStatus.NO_CONTENT);
-        }
-        VehiculoDto vehResp = new VehiculoDto();
-        vehResp.setId(vehiculo.getId());
-        vehResp.setRutDueno(vehiculo.getRutDueno());
-        vehResp.setNumeroMotor(vehiculo.getNumeroMotor());
-        vehResp.setKilometraje(vehiculo.getKilometraje());
-        vehResp.setModelo(vehiculo.getModelo());
-        vehResp.setMarca(vehiculo.getMarca());
-        vehResp.setHabilitado(vehiculo.getHabilitado());
-        vehResp.setColor(vehiculo.getColor());
-        vehResp.setNumeroChasis(vehiculo.getNumeroChasis());
-        vehResp.setAnio(vehiculo.getAnio());
-        vehResp.setPatente(vehiculo.getPatente());
-
-        Set<ClienteDto> clienteDtoSet = new HashSet<>();
-        for (ClienteDto clienteDto : vehiculo.getCliente()) {
-            ClienteDto clte = new ClienteDto();
-            clte.setId(clienteDto.getId());
-            clte.setApellido(clienteDto.getApellido());
-            clte.setHabilitado(clienteDto.getHabilitado());
-            clte.setDireccion(clienteDto.getDireccion());
-            clte.setCiudad(clienteDto.getCiudad());
-            clte.setNombre(clienteDto.getNombre());
-            clte.setRut(clienteDto.getRut());
-            clte.setComuna(clienteDto.getComuna());
-            clte.setEmail(clienteDto.getEmail());
-            clte.setTelefono(clienteDto.getTelefono());
-
-            EmpresaDto empresaDto = new EmpresaDto();
-            empresaDto.setId(clienteDto.getEmpresa().getId());
-            empresaDto.setNombre(clienteDto.getEmpresa().getNombre());
-            empresaDto.setRut(clienteDto.getEmpresa().getRut());
-            empresaDto.setDireccion(clienteDto.getEmpresa().getDireccion());
-
-            clte.setEmpresa(empresaDto);
-            clienteDtoSet.add(clte);
-        }
-
-        vehResp.setCliente(clienteDtoSet);
-
         return new ResponseEntity(vehResp, HttpStatus.OK);
     }
 
@@ -226,11 +162,10 @@ public class VehiculoController {
         }
 
         Optional<ClienteDto> clienteDtoOptional = clienteRepository
-                .findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(), newVehiculo.getId_empresa());
+                .findByRutAndHabilitado(newVehiculo.getRutDueno());
         ClienteDto cliente = new ClienteDto();
 
         if (clienteDtoOptional.isPresent()) {
-            EmpresaDto empresaDto = new EmpresaDto();
             Set<ClienteDto> clienteDtoSet = new HashSet<>();
             cliente.setId(clienteDtoOptional.get().getId());
             cliente.setRut(clienteDtoOptional.get().getRut());
@@ -243,12 +178,6 @@ public class VehiculoController {
             cliente.setHabilitado(clienteDtoOptional.get().getHabilitado());
             cliente.setApellido(clienteDtoOptional.get().getApellido());
 
-            empresaDto.setDireccion(clienteDtoOptional.get().getEmpresa().getDireccion());
-            empresaDto.setNombre(clienteDtoOptional.get().getEmpresa().getNombre());
-            empresaDto.setRut(clienteDtoOptional.get().getEmpresa().getRut());
-            empresaDto.setId(clienteDtoOptional.get().getEmpresa().getId());
-
-            cliente.setEmpresa(empresaDto);
             clienteDtoSet.add(cliente);
 
             vehiculoDto.setCliente(clienteDtoSet);
@@ -290,11 +219,11 @@ public class VehiculoController {
             }
 
             Optional<ClienteDto> clienteDtoOptional = clienteRepository
-                    .findByRutAndHabilitadoAndEmpresa(newVehiculo.getRutDueno(), newVehiculo.getId_empresa());
+                    .findByRutAndHabilitado(newVehiculo.getRutDueno());
             ClienteDto cliente = new ClienteDto();
 
             if (clienteDtoOptional.isPresent()) {
-                EmpresaDto empresaDto = new EmpresaDto();
+                
                 Set<ClienteDto> clienteDtoSet = new HashSet<>();
                 cliente.setId(clienteDtoOptional.get().getId());
                 cliente.setRut(clienteDtoOptional.get().getRut());
@@ -307,12 +236,6 @@ public class VehiculoController {
                 cliente.setHabilitado(clienteDtoOptional.get().getHabilitado());
                 cliente.setApellido(clienteDtoOptional.get().getApellido());
 
-                empresaDto.setDireccion(clienteDtoOptional.get().getEmpresa().getDireccion());
-                empresaDto.setNombre(clienteDtoOptional.get().getEmpresa().getNombre());
-                empresaDto.setRut(clienteDtoOptional.get().getEmpresa().getRut());
-                empresaDto.setId(clienteDtoOptional.get().getEmpresa().getId());
-
-                cliente.setEmpresa(empresaDto);
                 clienteDtoSet.add(cliente);
 
                 vehiculoDto.setCliente(clienteDtoSet);
