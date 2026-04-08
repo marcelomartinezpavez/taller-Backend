@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("ordenTrabajo")
@@ -54,6 +57,61 @@ public class OrdenTrabajoController {
         }
     }
 
+    @GetMapping(path = "/cerradas", produces = "application/json")
+    @CrossOrigin(origins = "*")
+    public @ResponseBody ResponseEntity<?> getOrdenesCerradasMesActual() {
+        try {
+            System.out.println("getOrdenesCerradasMesActual");
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/yyyy");
+            String mesActual = dtf.format(LocalDateTime.now());
+
+            // Ahora el filtro ocurre directamente en el repositorio (SQL)
+            List<OrdenTrabajoDto> filtradas = ordenTrabajoRepository.findByEstadoAndFechaContiene("CERRADO", mesActual);
+
+            long sumatoriaValorOt = filtradas.stream()
+                    .mapToLong(OrdenTrabajoDto::getValorOt)
+                    .sum();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalValorOt", sumatoriaValorOt);
+            response.put("cantidadOrdenes", filtradas.size());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error al obtener estadísticas de órdenes cerradas",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(path = "/mensual", produces = "application/json")
+    @CrossOrigin(origins = "*")
+    public @ResponseBody ResponseEntity<?> getOrdenesMesActual() {
+        try {
+            System.out.println("getOrdenesMesActual");
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/yyyy");
+            String mesActual = dtf.format(LocalDateTime.now());
+
+            List<OrdenTrabajoDto> filtradas = ordenTrabajoRepository.findByFechaContiene(mesActual);
+
+            long sumatoriaValorOt = filtradas.stream()
+                    .mapToLong(OrdenTrabajoDto::getValorOt)
+                    .sum();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalValorOt", sumatoriaValorOt);
+            response.put("cantidadOrdenes", filtradas.size());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error al obtener estadísticas mensuales",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "/{numeroOrden}", produces = "application/json")
     @CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getOrdenTrabajo(@PathVariable Long numeroOrden) {
@@ -64,7 +122,8 @@ public class OrdenTrabajoController {
             }
             return new ResponseEntity<>(ordenTrabajo, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error Interno al buscar por numero de orden", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error Interno al buscar por numero de orden",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -135,7 +194,7 @@ public class OrdenTrabajoController {
             otResponse.setNivelCombustible(newOrdenTrabajo.getNivelCombustible());
             otResponse.setObservaciones(newOrdenTrabajo.getObservaciones());
 
-            //otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
+            // otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
 
             VehiculoDto vehiculo = new VehiculoDto();
             vehiculo.setId(vehiculoDto.getId());
@@ -160,73 +219,76 @@ public class OrdenTrabajoController {
             Set<DetalleRepuestosDto> detalleSet = new HashSet<>();
             if (newOrdenTrabajo.getDetalleRepuesto() != null) {
                 newOrdenTrabajo.getDetalleRepuesto().forEach(detalle -> {
-                DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
-                detalleDto.setDescripcion(detalle.getDescripcion());
-                detalleDto.setPorcentajeRecargo(detalle.getPorcentajeRecargo());
-                detalleDto.setValor(detalle.getValor());
-                detalleDto.setCantidad(detalle.getCantidad());
-                detalleDto.setTotal(detalle.getTotal());
+                    DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
+                    detalleDto.setDescripcion(detalle.getDescripcion());
+                    detalleDto.setPorcentajeRecargo(detalle.getPorcentajeRecargo());
+                    detalleDto.setValor(detalle.getValor());
+                    detalleDto.setCantidad(detalle.getCantidad());
+                    detalleDto.setTotal(detalle.getTotal());
 
-                RepuestoDto repuestoDto = new RepuestoDto();
-                if (detalle.getRepuesto_id() != 0) {
-                    Optional<RepuestoDto> repuestoDtoOptional = repuestoRepository.findById(detalle.getRepuesto_id());
-                    if (repuestoDtoOptional.isPresent()) {
-                        repuestoDto.setId(repuestoDtoOptional.get().getId());
-                        repuestoDto.setCodigo(repuestoDtoOptional.get().getCodigo());
-                        repuestoDto.setHabilitado(repuestoDtoOptional.get().getHabilitado());
-                        repuestoDto.setNombre(repuestoDtoOptional.get().getNombre());
-                        repuestoDto.setMarca(repuestoDtoOptional.get().getMarca());
-                        repuestoDto.setModelo(repuestoDtoOptional.get().getModelo());
-                        repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
-                        repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
-                        repuestoDto.setValor(repuestoDtoOptional.get().getValor());
-                        // Falta agregar proveedor a repuestoDto
+                    RepuestoDto repuestoDto = new RepuestoDto();
+                    if (detalle.getRepuesto_id() != 0) {
+                        Optional<RepuestoDto> repuestoDtoOptional = repuestoRepository
+                                .findById(detalle.getRepuesto_id());
+                        if (repuestoDtoOptional.isPresent()) {
+                            repuestoDto.setId(repuestoDtoOptional.get().getId());
+                            repuestoDto.setCodigo(repuestoDtoOptional.get().getCodigo());
+                            repuestoDto.setHabilitado(repuestoDtoOptional.get().getHabilitado());
+                            repuestoDto.setNombre(repuestoDtoOptional.get().getNombre());
+                            repuestoDto.setMarca(repuestoDtoOptional.get().getMarca());
+                            repuestoDto.setModelo(repuestoDtoOptional.get().getModelo());
+                            repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
+                            repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
+                            repuestoDto.setValor(repuestoDtoOptional.get().getValor());
+                            // Falta agregar proveedor a repuestoDto
+                        }
+                        detalleDto.setRepuesto(repuestoDto);
                     }
-                    detalleDto.setRepuesto(repuestoDto);
-                }
-                detalleRepository.save(detalleDto);
-                detalleSet.add(detalleDto);
-            });
+                    detalleRepository.save(detalleDto);
+                    detalleSet.add(detalleDto);
+                });
             }
             otResponse.setDetalle(detalleSet);
 
             Set<TrabajosGeneralesDto> trabajosGeneralesSet = new HashSet<>();
             if (newOrdenTrabajo.getTrabajosGenerales() != null) {
                 newOrdenTrabajo.getTrabajosGenerales().forEach(trabajosGenerales -> {
-                TrabajosGeneralesDto trabajosGeneralesDto = new TrabajosGeneralesDto();
-                trabajosGeneralesDto.setDescripcion(trabajosGenerales.getDescripcionGeneral());
-                trabajosGeneralesDto.setPorcentajeRecargo(trabajosGenerales.getPorcentajeRecargoGeneral());
-                trabajosGeneralesDto.setValor(trabajosGenerales.getValorGeneral());
-                long cantidad = trabajosGenerales.getCantidadGeneral() <= 0 ? 1 : trabajosGenerales.getCantidadGeneral();
-                trabajosGeneralesDto.setCantidad(cantidad);
-                trabajosGeneralesDto.setTotal(trabajosGenerales.getValorGeneral() * cantidad);
-                trabajosGeneralesDto.setPrestadorServicio(trabajosGenerales.getPrestadorServicioGeneral());
-                //trabajosGeneralesDto.setOrdenTrabajo(otResponse);
+                    TrabajosGeneralesDto trabajosGeneralesDto = new TrabajosGeneralesDto();
+                    trabajosGeneralesDto.setDescripcion(trabajosGenerales.getDescripcionGeneral());
+                    trabajosGeneralesDto.setPorcentajeRecargo(trabajosGenerales.getPorcentajeRecargoGeneral());
+                    trabajosGeneralesDto.setValor(trabajosGenerales.getValorGeneral());
+                    long cantidad = trabajosGenerales.getCantidadGeneral() <= 0 ? 1
+                            : trabajosGenerales.getCantidadGeneral();
+                    trabajosGeneralesDto.setCantidad(cantidad);
+                    trabajosGeneralesDto.setTotal(trabajosGenerales.getValorGeneral() * cantidad);
+                    trabajosGeneralesDto.setPrestadorServicio(trabajosGenerales.getPrestadorServicioGeneral());
+                    // trabajosGeneralesDto.setOrdenTrabajo(otResponse);
 
-                trabajosGeneralesRepository.save(trabajosGeneralesDto);
+                    trabajosGeneralesRepository.save(trabajosGeneralesDto);
 
-                trabajosGeneralesSet.add(trabajosGeneralesDto);
-            });
+                    trabajosGeneralesSet.add(trabajosGeneralesDto);
+                });
             }
             otResponse.setTrabajosGenerales(trabajosGeneralesSet);
 
             Set<TrabajosTercerosDto> trabajosTercerosSet = new HashSet<>();
             if (newOrdenTrabajo.getTrabajosTerceros() != null) {
                 newOrdenTrabajo.getTrabajosTerceros().forEach(trabajosTerceros -> {
-                TrabajosTercerosDto trabajosTercerosDto = new TrabajosTercerosDto();
-                trabajosTercerosDto.setDescripcion(trabajosTerceros.getDescripcionTercero());
-                trabajosTercerosDto.setPorcentajeRecargo(trabajosTerceros.getPorcentajeRecargoTercero());
-                trabajosTercerosDto.setValor(trabajosTerceros.getValorTercero());
-                long cantidad = trabajosTerceros.getCantidadTercero() <= 0 ? 1 : trabajosTerceros.getCantidadTercero();
-                trabajosTercerosDto.setCantidad(cantidad);
-                trabajosTercerosDto.setTotal(trabajosTerceros.getValorTercero() * cantidad);
-                trabajosTercerosDto.setPrestadorServicio(trabajosTerceros.getPrestadorServicioTercero());
-                //trabajosTercerosDto.setOrdenTrabajo(otResponse);
+                    TrabajosTercerosDto trabajosTercerosDto = new TrabajosTercerosDto();
+                    trabajosTercerosDto.setDescripcion(trabajosTerceros.getDescripcionTercero());
+                    trabajosTercerosDto.setPorcentajeRecargo(trabajosTerceros.getPorcentajeRecargoTercero());
+                    trabajosTercerosDto.setValor(trabajosTerceros.getValorTercero());
+                    long cantidad = trabajosTerceros.getCantidadTercero() <= 0 ? 1
+                            : trabajosTerceros.getCantidadTercero();
+                    trabajosTercerosDto.setCantidad(cantidad);
+                    trabajosTercerosDto.setTotal(trabajosTerceros.getValorTercero() * cantidad);
+                    trabajosTercerosDto.setPrestadorServicio(trabajosTerceros.getPrestadorServicioTercero());
+                    // trabajosTercerosDto.setOrdenTrabajo(otResponse);
 
-                trabajosTercerosRepository.save(trabajosTercerosDto);
+                    trabajosTercerosRepository.save(trabajosTercerosDto);
 
-                trabajosTercerosSet.add(trabajosTercerosDto);
-            });
+                    trabajosTercerosSet.add(trabajosTercerosDto);
+                });
             }
             otResponse.setTrabajosTerceros(trabajosTercerosSet);
 
@@ -239,13 +301,11 @@ public class OrdenTrabajoController {
                 detalle.setOrdenTrabajo(otNew);
                 detalleRepository.save(detalle);
             });
-            
+
             trabajosGeneralesSet.forEach(trabajoGeneral -> {
-                trabajoGeneral.setOrdenTrabajo(otNew); 
+                trabajoGeneral.setOrdenTrabajo(otNew);
                 trabajosGeneralesRepository.save(trabajoGeneral);
             });
-
-
 
             trabajosTercerosSet.forEach(trabajoTercero -> {
                 trabajoTercero.setOrdenTrabajo(otNew);
@@ -311,7 +371,7 @@ public class OrdenTrabajoController {
             otResponse.setNivelCombustible(newOrdenTrabajo.getNivelCombustible());
             otResponse.setObservaciones(newOrdenTrabajo.getObservaciones());
 
-            //otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
+            // otResponse.setNumeroOrden(newOrdenTrabajo.getNumeroOrden());
 
             VehiculoDto vehiculo = new VehiculoDto();
             vehiculo.setId(vehiculoDto.getId());
@@ -336,34 +396,35 @@ public class OrdenTrabajoController {
             Set<DetalleRepuestosDto> detalleSet = new HashSet<>();
             if (newOrdenTrabajo.getDetalleRepuesto() != null) {
                 newOrdenTrabajo.getDetalleRepuesto().forEach(detalle -> {
-                DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
-                detalleDto.setDescripcion(detalle.getDescripcion());
-                detalleDto.setPorcentajeRecargo(detalle.getPorcentajeRecargo());
-                detalleDto.setValor(detalle.getValor());
-                detalleDto.setCantidad(detalle.getCantidad());
-                detalleDto.setTotal(detalle.getTotal());
+                    DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
+                    detalleDto.setDescripcion(detalle.getDescripcion());
+                    detalleDto.setPorcentajeRecargo(detalle.getPorcentajeRecargo());
+                    detalleDto.setValor(detalle.getValor());
+                    detalleDto.setCantidad(detalle.getCantidad());
+                    detalleDto.setTotal(detalle.getTotal());
 
-                RepuestoDto repuestoDto = new RepuestoDto();
-                if (detalle.getRepuesto_id() != 0) {
-                    Optional<RepuestoDto> repuestoDtoOptional = repuestoRepository.findById(detalle.getRepuesto_id());
-                    if (repuestoDtoOptional.isPresent()) {
-                        repuestoDto.setId(repuestoDtoOptional.get().getId());
-                        repuestoDto.setCodigo(repuestoDtoOptional.get().getCodigo());
-                        repuestoDto.setHabilitado(repuestoDtoOptional.get().getHabilitado());
-                        repuestoDto.setNombre(repuestoDtoOptional.get().getNombre());
-                        repuestoDto.setMarca(repuestoDtoOptional.get().getMarca());
-                        repuestoDto.setModelo(repuestoDtoOptional.get().getModelo());
-                        repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
-                        repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
-                        repuestoDto.setValor(repuestoDtoOptional.get().getValor());
-                        // Falta agregar proveedor a repuestoDto
+                    RepuestoDto repuestoDto = new RepuestoDto();
+                    if (detalle.getRepuesto_id() != 0) {
+                        Optional<RepuestoDto> repuestoDtoOptional = repuestoRepository
+                                .findById(detalle.getRepuesto_id());
+                        if (repuestoDtoOptional.isPresent()) {
+                            repuestoDto.setId(repuestoDtoOptional.get().getId());
+                            repuestoDto.setCodigo(repuestoDtoOptional.get().getCodigo());
+                            repuestoDto.setHabilitado(repuestoDtoOptional.get().getHabilitado());
+                            repuestoDto.setNombre(repuestoDtoOptional.get().getNombre());
+                            repuestoDto.setMarca(repuestoDtoOptional.get().getMarca());
+                            repuestoDto.setModelo(repuestoDtoOptional.get().getModelo());
+                            repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
+                            repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
+                            repuestoDto.setValor(repuestoDtoOptional.get().getValor());
+                            // Falta agregar proveedor a repuestoDto
+                        }
+                        detalleDto.setRepuesto(repuestoDto);
+
                     }
-                    detalleDto.setRepuesto(repuestoDto);
+                    detalleSet.add(detalleDto);
 
-                }
-                detalleSet.add(detalleDto);
-
-            });
+                });
             }
             otResponse.getDetalleRepuestosDtos().clear();
             detalleSet.forEach(detalle -> {
@@ -371,7 +432,7 @@ public class OrdenTrabajoController {
                 otResponse.getDetalleRepuestosDtos().add(detalle);
             });
             OrdenTrabajoDto otUpdated = ordenTrabajoRepository.save(otResponse);
-            
+
             return new ResponseEntity<>(otUpdated, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
