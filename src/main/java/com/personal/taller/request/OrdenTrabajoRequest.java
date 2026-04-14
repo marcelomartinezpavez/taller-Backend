@@ -16,7 +16,7 @@ public class OrdenTrabajoRequest {
 
     private long idEmpresa;
     private List<DetalleRepuestoRequest> detalleRepuesto;
-    private List<TrabajosGeneralesRequest> trabajosGenerales;
+    private List<RepuestosOrdenRequest> repuestosOrden;
     private List<TrabajosTercerosRequest> trabajosTerceros;
 
     public long getId() {
@@ -112,17 +112,17 @@ public class OrdenTrabajoRequest {
     }
 
     /**
-     * @return List<TrabajosGeneralesRequest> return the trabajosGenerales
+     * @return List<RepuestosOrdenRequest> return the repuestosOrden
      */
-    public List<TrabajosGeneralesRequest> getTrabajosGenerales() {
-        return trabajosGenerales;
+    public List<RepuestosOrdenRequest> getRepuestosOrden() {
+        return repuestosOrden;
     }
 
     /**
-     * @param trabajosGenerales the trabajosGenerales to set
+     * @param repuestosOrden the repuestosOrden to set
      */
-    public void setTrabajosGenerales(List<TrabajosGeneralesRequest> trabajosGenerales) {
-        this.trabajosGenerales = trabajosGenerales;
+    public void setRepuestosOrden(List<RepuestosOrdenRequest> repuestosOrden) {
+        this.repuestosOrden = repuestosOrden;
     }
 
     /**

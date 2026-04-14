@@ -49,7 +49,7 @@ public class OrdenTrabajoDto implements Serializable {
 @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
                cascade = CascadeType.ALL, orphanRemoval = true)
                @JsonManagedReference
-    private Set<TrabajosGeneralesDto> trabajosGenerales = new HashSet<>();
+    private Set<RepuestosOrdenDto> repuestosOrden = new HashSet<>();
 
     @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
                cascade = CascadeType.ALL, orphanRemoval = true)
@@ -243,17 +243,17 @@ public class OrdenTrabajoDto implements Serializable {
     }
 
     /**
-     * @return Set<TrabajosGeneralesDto> return the trabajosGenerales
+     * @return Set<RepuestosOrdenDto> return the repuestosOrden
      */
-    public Set<TrabajosGeneralesDto> getTrabajosGenerales() {
-        return trabajosGenerales;
+    public Set<RepuestosOrdenDto> getRepuestosOrden() {
+        return repuestosOrden;
     }
 
     /**
-     * @param trabajosGenerales the trabajosGenerales to set
+     * @param repuestosOrden the repuestosOrden to set
      */
-    public void setTrabajosGenerales(Set<TrabajosGeneralesDto> trabajosGenerales) {
-        this.trabajosGenerales = trabajosGenerales;
+    public void setRepuestosOrden(Set<RepuestosOrdenDto> repuestosOrden) {
+        this.repuestosOrden = repuestosOrden;
     }
 
     /**

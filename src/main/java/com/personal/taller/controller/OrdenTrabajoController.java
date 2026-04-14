@@ -39,7 +39,7 @@ public class OrdenTrabajoController {
     DetalleRepuestoRepository detalleRepository;
 
     @Autowired
-    TrabajosGeneralesRepository trabajosGeneralesRepository;
+    RepuestosOrdenRepository repuestosOrdenRepository;
 
     @Autowired
     TrabajosTercerosRepository trabajosTercerosRepository;
@@ -250,26 +250,27 @@ public class OrdenTrabajoController {
             }
             otResponse.setDetalle(detalleSet);
 
-            Set<TrabajosGeneralesDto> trabajosGeneralesSet = new HashSet<>();
-            if (newOrdenTrabajo.getTrabajosGenerales() != null) {
-                newOrdenTrabajo.getTrabajosGenerales().forEach(trabajosGenerales -> {
-                    TrabajosGeneralesDto trabajosGeneralesDto = new TrabajosGeneralesDto();
-                    trabajosGeneralesDto.setDescripcion(trabajosGenerales.getDescripcionGeneral());
-                    trabajosGeneralesDto.setPorcentajeRecargo(trabajosGenerales.getPorcentajeRecargoGeneral());
-                    trabajosGeneralesDto.setValor(trabajosGenerales.getValorGeneral());
-                    long cantidad = trabajosGenerales.getCantidadGeneral() <= 0 ? 1
-                            : trabajosGenerales.getCantidadGeneral();
-                    trabajosGeneralesDto.setCantidad(cantidad);
-                    trabajosGeneralesDto.setTotal(trabajosGenerales.getValorGeneral() * cantidad);
-                    trabajosGeneralesDto.setPrestadorServicio(trabajosGenerales.getPrestadorServicioGeneral());
-                    // trabajosGeneralesDto.setOrdenTrabajo(otResponse);
+            Set<RepuestosOrdenDto> repuestosOrdenSet = new HashSet<>();
+            if (newOrdenTrabajo.getRepuestosOrden() != null) {
+                newOrdenTrabajo.getRepuestosOrden().forEach(repuestoOrden -> {
+                    RepuestosOrdenDto repuestosOrdenDto = new RepuestosOrdenDto();
+                    repuestosOrdenDto.setDescripcion(repuestoOrden.getDescripcion());
+                    repuestosOrdenDto.setPorcentajeRecargo(repuestoOrden.getPorcentajeRecargo());
+                    repuestosOrdenDto.setValor(repuestoOrden.getValor());
+                    long cantidad = repuestoOrden.getCantidad() <= 0 ? 1
+                            : repuestoOrden.getCantidad();
+                    repuestosOrdenDto.setCantidad(cantidad);
+                    long recargo = (repuestoOrden.getValor() * cantidad * repuestoOrden.getPorcentajeRecargo()) / 100;
+                    repuestosOrdenDto.setTotal((repuestoOrden.getValor() * cantidad) + recargo);
+                    repuestosOrdenDto.setPrestadorServicio(repuestoOrden.getPrestadorServicio());
+                    // repuestosOrdenDto.setOrdenTrabajo(otResponse);
 
-                    trabajosGeneralesRepository.save(trabajosGeneralesDto);
+                    repuestosOrdenRepository.save(repuestosOrdenDto);
 
-                    trabajosGeneralesSet.add(trabajosGeneralesDto);
+                    repuestosOrdenSet.add(repuestosOrdenDto);
                 });
             }
-            otResponse.setTrabajosGenerales(trabajosGeneralesSet);
+            otResponse.setRepuestosOrden(repuestosOrdenSet);
 
             Set<TrabajosTercerosDto> trabajosTercerosSet = new HashSet<>();
             if (newOrdenTrabajo.getTrabajosTerceros() != null) {
@@ -281,7 +282,8 @@ public class OrdenTrabajoController {
                     long cantidad = trabajosTerceros.getCantidadTercero() <= 0 ? 1
                             : trabajosTerceros.getCantidadTercero();
                     trabajosTercerosDto.setCantidad(cantidad);
-                    trabajosTercerosDto.setTotal(trabajosTerceros.getValorTercero() * cantidad);
+                    long recargo = (trabajosTerceros.getValorTercero() * cantidad * trabajosTerceros.getPorcentajeRecargoTercero()) / 100;
+                    trabajosTercerosDto.setTotal((trabajosTerceros.getValorTercero() * cantidad) + recargo);
                     trabajosTercerosDto.setPrestadorServicio(trabajosTerceros.getPrestadorServicioTercero());
                     // trabajosTercerosDto.setOrdenTrabajo(otResponse);
 
@@ -302,9 +304,9 @@ public class OrdenTrabajoController {
                 detalleRepository.save(detalle);
             });
 
-            trabajosGeneralesSet.forEach(trabajoGeneral -> {
-                trabajoGeneral.setOrdenTrabajo(otNew);
-                trabajosGeneralesRepository.save(trabajoGeneral);
+            repuestosOrdenSet.forEach(repuestoOrden -> {
+                repuestoOrden.setOrdenTrabajo(otNew);
+                repuestosOrdenRepository.save(repuestoOrden);
             });
 
             trabajosTercerosSet.forEach(trabajoTercero -> {
@@ -417,13 +419,10 @@ public class OrdenTrabajoController {
                             repuestoDto.setAnio(repuestoDtoOptional.get().getAnio());
                             repuestoDto.setRutProveedor(repuestoDtoOptional.get().getRutProveedor());
                             repuestoDto.setValor(repuestoDtoOptional.get().getValor());
-                            // Falta agregar proveedor a repuestoDto
                         }
                         detalleDto.setRepuesto(repuestoDto);
-
                     }
                     detalleSet.add(detalleDto);
-
                 });
             }
             otResponse.getDetalleRepuestosDtos().clear();
@@ -431,6 +430,47 @@ public class OrdenTrabajoController {
                 detalle.setOrdenTrabajo(otResponse);
                 otResponse.getDetalleRepuestosDtos().add(detalle);
             });
+
+            // --- REPUESTOS ORDEN ---
+            Set<RepuestosOrdenDto> roSet = new HashSet<>();
+            if (newOrdenTrabajo.getRepuestosOrden() != null) {
+                newOrdenTrabajo.getRepuestosOrden().forEach(roReq -> {
+                    RepuestosOrdenDto roDto = new RepuestosOrdenDto();
+                    roDto.setDescripcion(roReq.getDescripcion());
+                    roDto.setPorcentajeRecargo(roReq.getPorcentajeRecargo());
+                    roDto.setValor(roReq.getValor());
+                    roDto.setCantidad(roReq.getCantidad() <= 0 ? 1 : roReq.getCantidad());
+                    roDto.setTotal(roReq.getTotal());
+                    roDto.setPrestadorServicio(roReq.getPrestadorServicio());
+                    roSet.add(roDto);
+                });
+            }
+            otResponse.getRepuestosOrden().clear();
+            roSet.forEach(ro -> {
+                ro.setOrdenTrabajo(otResponse);
+                otResponse.getRepuestosOrden().add(ro);
+            });
+
+            // --- TRABAJOS TERCEROS ---
+            Set<TrabajosTercerosDto> ttSet = new HashSet<>();
+            if (newOrdenTrabajo.getTrabajosTerceros() != null) {
+                newOrdenTrabajo.getTrabajosTerceros().forEach(ttReq -> {
+                    TrabajosTercerosDto ttDto = new TrabajosTercerosDto();
+                    ttDto.setDescripcion(ttReq.getDescripcionTercero());
+                    ttDto.setPorcentajeRecargo(ttReq.getPorcentajeRecargoTercero());
+                    ttDto.setValor(ttReq.getValorTercero());
+                    ttDto.setCantidad(ttReq.getCantidadTercero() <= 0 ? 1 : ttReq.getCantidadTercero());
+                    ttDto.setTotal(ttReq.getTotalTercero());
+                    ttDto.setPrestadorServicio(ttReq.getPrestadorServicioTercero());
+                    ttSet.add(ttDto);
+                });
+            }
+            otResponse.getTrabajosTerceros().clear();
+            ttSet.forEach(tt -> {
+                tt.setOrdenTrabajo(otResponse);
+                otResponse.getTrabajosTerceros().add(tt);
+            });
+
             OrdenTrabajoDto otUpdated = ordenTrabajoRepository.save(otResponse);
 
             return new ResponseEntity<>(otUpdated, HttpStatus.OK);

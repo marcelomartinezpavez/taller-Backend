@@ -1,52 +1,13 @@
-package com.personal.taller.dto;
+package com.personal.taller.request;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+public class RepuestosOrdenRequest {
 
-import javax.persistence.*;
-
-@JsonIgnoreProperties({ "hibernateLazyInitializer" })
-@Entity
-@Table(name = "trabajosGenerales")
-public class TrabajosGeneralesDto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    @Column(name = "descripcion")
     private String descripcion;
-    @Column(name = "porcentajeRecargo")
     private long porcentajeRecargo;
-    @Column(name = "valor")
     private long valor;
-    @Column(name = "cantidad")
-    private long cantidad; /* Siempre debe ser 1 */
-    @Column(name = "total")
     private long total;
-
-    @Column(name = "prestadorServicio")
     private String prestadorServicio;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ordenTrabajo_id")
-    @JsonBackReference
-    private OrdenTrabajoDto ordenTrabajo;
-
-    public TrabajosGeneralesDto() {
-    }
-
-    /**
-     * @return long return the id
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id) {
-        this.id = id;
-    }
+    private long cantidad;
 
     /**
      * @return String return the descripcion
@@ -105,20 +66,6 @@ public class TrabajosGeneralesDto {
     }
 
     /**
-     * @return OrdenTrabajoDto return the ordenTrabajo
-     */
-    public OrdenTrabajoDto getOrdenTrabajo() {
-        return ordenTrabajo;
-    }
-
-    /**
-     * @param ordenTrabajo the ordenTrabajo to set
-     */
-    public void setOrdenTrabajo(OrdenTrabajoDto ordenTrabajo) {
-        this.ordenTrabajo = ordenTrabajo;
-    }
-
-    /**
      * @return String return the prestadorServicio
      */
     public String getPrestadorServicio() {
@@ -136,9 +83,6 @@ public class TrabajosGeneralesDto {
         return cantidad;
     }
 
-    /**
-     * @param valor the valor to set
-     */
     public void setCantidad(long cantidad) {
         this.cantidad = cantidad;
     }
