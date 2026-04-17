@@ -1,5 +1,22 @@
 package com.personal.taller.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.personal.taller.dto.AgendaDto;
 import com.personal.taller.dto.ClienteDto;
 import com.personal.taller.dto.VehiculoDto;
@@ -8,18 +25,10 @@ import com.personal.taller.repository.ClienteRepository;
 import com.personal.taller.repository.VehiculoRepository;
 import com.personal.taller.request.AgendaRequest;
 import com.personal.taller.util.RutUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("agenda")
+//@CrossOrigin(origins = "${taller.server.url}")
 public class AgendaController {
     @Autowired
     AgendaRepository agendaRepository;
@@ -31,7 +40,7 @@ public class AgendaController {
     VehiculoRepository vehiculoRepository;
 
     @GetMapping(path = "/all", produces = "application/json")
-    @CrossOrigin(origins = "*")
+   // @CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAllAgenda() {
         try {
             List<AgendaDto> agendas = agendaRepository.findAllActive();
@@ -42,7 +51,7 @@ public class AgendaController {
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+   // @CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAgendaById(@PathVariable Long id) {
         try {
             if (id == null) {
@@ -59,7 +68,7 @@ public class AgendaController {
     }
 
     @GetMapping(path = "/cliente/{clienteId}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAgendaByCliente(@PathVariable Long clienteId) {
         try {
             List<AgendaDto> agendas = agendaRepository.findByClienteId(clienteId);
@@ -70,7 +79,7 @@ public class AgendaController {
     }
 
     @GetMapping(path = "/vehiculo/{vehiculoId}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAgendaByVehiculo(@PathVariable Long vehiculoId) {
         try {
             List<AgendaDto> agendas = agendaRepository.findByVehiculoId(vehiculoId);
@@ -81,7 +90,7 @@ public class AgendaController {
     }
 
     @GetMapping(path = "/estado/{estado}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAgendaByEstado(@PathVariable String estado) {
         try {
             List<AgendaDto> agendas = agendaRepository.findByEstado(estado);
@@ -92,7 +101,7 @@ public class AgendaController {
     }
 
     @GetMapping(path = "/fecha/{fecha}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAgendaByFecha(@PathVariable String fecha) {
         try {
             List<AgendaDto> agendas = agendaRepository.findByFechaReservaContains(fecha);
@@ -103,7 +112,7 @@ public class AgendaController {
     }
 
     @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<?> create(@RequestBody AgendaRequest request) {
         try {
             if (request.getFechaHoraReserva() == null || request.getFechaHoraReserva().isEmpty()) {
@@ -155,7 +164,7 @@ public class AgendaController {
     }
 
     @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<?> update(@RequestBody AgendaRequest request) {
         try {
             if (request.getId() == null) {
@@ -211,7 +220,7 @@ public class AgendaController {
     }
 
     @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+   // @CrossOrigin(origins = "*")
     public ResponseEntity<?> delete(@RequestBody AgendaRequest request) {
         try {
             if (request.getId() == null) {

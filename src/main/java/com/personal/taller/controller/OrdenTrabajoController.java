@@ -1,15 +1,5 @@
 package com.personal.taller.controller;
 
-import com.personal.taller.dto.*;
-import com.personal.taller.repository.*;
-import com.personal.taller.request.OrdenTrabajoRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -18,10 +8,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.personal.taller.dto.ClienteDto;
+import com.personal.taller.dto.DetalleRepuestosDto;
+import com.personal.taller.dto.OrdenTrabajoDto;
+import com.personal.taller.dto.RepuestoDto;
+import com.personal.taller.dto.RepuestosOrdenDto;
+import com.personal.taller.dto.TrabajosTercerosDto;
+import com.personal.taller.dto.VehiculoDto;
+import com.personal.taller.repository.ClienteRepository;
+import com.personal.taller.repository.DetalleRepuestoRepository;
+import com.personal.taller.repository.OrdenTrabajoRepository;
+import com.personal.taller.repository.RepuestoRepository;
+import com.personal.taller.repository.RepuestosOrdenRepository;
+import com.personal.taller.repository.TrabajosTercerosRepository;
+import com.personal.taller.repository.VehiculoRepository;
+import com.personal.taller.request.OrdenTrabajoRequest;
 
 @Controller
 @RequestMapping("ordenTrabajo")
+//@CrossOrigin(origins = "${taller.server.url}")
 public class OrdenTrabajoController {
     @Autowired
     OrdenTrabajoRepository ordenTrabajoRepository;
@@ -45,7 +65,7 @@ public class OrdenTrabajoController {
     TrabajosTercerosRepository trabajosTercerosRepository;
 
     @GetMapping(path = "/all", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getAllOrdenTrabajo() {
         try {
             System.out.println("getAll Orden Trabajo");
@@ -58,7 +78,7 @@ public class OrdenTrabajoController {
     }
 
     @GetMapping(path = "/cerradas", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getOrdenesCerradasMesActual() {
         try {
             System.out.println("getOrdenesCerradasMesActual");
@@ -86,7 +106,7 @@ public class OrdenTrabajoController {
     }
 
     @GetMapping(path = "/mensual", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getOrdenesMesActual() {
         try {
             System.out.println("getOrdenesMesActual");
@@ -113,7 +133,7 @@ public class OrdenTrabajoController {
     }
 
     @GetMapping(value = "/{numeroOrden}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getOrdenTrabajo(@PathVariable Long numeroOrden) {
         try {
             OrdenTrabajoDto ordenTrabajo = ordenTrabajoRepository.findByNumeroOrden(numeroOrden);
@@ -128,7 +148,7 @@ public class OrdenTrabajoController {
     }
 
     @GetMapping(value = "/patente/{patente}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getOrdenTrabajoPatente(@PathVariable String patente) {
         try {
             List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByPatenteVehiculo(patente);
@@ -139,7 +159,7 @@ public class OrdenTrabajoController {
     }
 
     @GetMapping(value = "/cliente/{rut}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity<?> getOrdenTrabajoCliente(@PathVariable String rut) {
         try {
             List<OrdenTrabajoDto> ordenTrabajo = ordenTrabajoRepository.findByRutCliente(rut);
@@ -150,7 +170,7 @@ public class OrdenTrabajoController {
     }
 
     @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<?> create(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
         System.out.println("INSERT OT");
 
@@ -323,7 +343,7 @@ public class OrdenTrabajoController {
     }
 
     @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<?> update(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
         try {
             VehiculoDto vehiculoDto = vehiculoRepository.findByPatente(newOrdenTrabajo.getPatenteVehiculo());
@@ -482,7 +502,7 @@ public class OrdenTrabajoController {
     }
 
     @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<?> delete(@RequestBody OrdenTrabajoRequest newOrdenTrabajo) {
         try {
             Optional<OrdenTrabajoDto> otOptional = ordenTrabajoRepository.findById(newOrdenTrabajo.getId());

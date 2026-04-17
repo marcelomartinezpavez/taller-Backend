@@ -16,6 +16,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("repuesto")
+//@CrossOrigin(origins = "${taller.server.url}")
 public class RepuestoController {
 
     @Autowired
@@ -25,7 +26,7 @@ public class RepuestoController {
     ProveedorRepository proveedorRepository;
 
     @GetMapping(path = "/all", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity getAllRepuesto() {
         System.out.println("getAll Repuesto");
@@ -86,7 +87,7 @@ public class RepuestoController {
     }
 
     @GetMapping(value = "/codigo/{codigo}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity getRepuesto(@PathVariable String codigo) {
         RepuestoDto repuesto = null;
@@ -150,7 +151,7 @@ public class RepuestoController {
     }
 
     @GetMapping(value = "/empresa/{idEmpresa}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity getRepuesto(@PathVariable long idEmpresa){
         List<RepuestoDto> repuestoDtoSet = repuestoRepository.findByEmpresa(idEmpresa);
@@ -159,7 +160,7 @@ public class RepuestoController {
 
 
     @GetMapping(value = "/proveedor/{rut}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity getRepuestoProveedor(@PathVariable String rut) {
         Set<RepuestoDto> repuestoDtoSet = repuestoRepository.findByProveedor(rut);
@@ -234,7 +235,7 @@ public class RepuestoController {
     @PostMapping(path = "/insert",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<RepuestoDto> create(@RequestBody RepuestoRequest newRepuesto) {
         RepuestoDto repuesto = new RepuestoDto();
         //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newRepuesto.getIdEmpresa());
@@ -288,7 +289,7 @@ public class RepuestoController {
     @PutMapping(path = "/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<RepuestoDto> update(@RequestBody RepuestoRequest newRepuesto) {
         RepuestoDto repuesto = new RepuestoDto();
         //Optional<EmpresaDto> respEmpresa = empresaRepository.findById(newRepuesto.getIdEmpresa());
@@ -344,7 +345,7 @@ public class RepuestoController {
     @DeleteMapping(path = "/delete",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<RepuestoDto> delete(@RequestBody RepuestoRequest newRepuesto) {
         RepuestoDto repuesto = repuestoRepository.findById(newRepuesto.getId()).get();
 

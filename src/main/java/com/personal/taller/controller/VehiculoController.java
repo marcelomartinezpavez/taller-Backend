@@ -1,22 +1,35 @@
 package com.personal.taller.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.personal.taller.dto.ClienteDto;
 import com.personal.taller.dto.VehiculoDto;
 import com.personal.taller.repository.ClienteRepository;
 import com.personal.taller.repository.VehiculoRepository;
 import com.personal.taller.request.VehiculoRequest;
 import com.personal.taller.response.VehiculoResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @Controller
 @RequestMapping("vehiculos")
+//@CrossOrigin(origins = "${taller.server.url}")
 public class VehiculoController {
 
     @Autowired
@@ -26,7 +39,7 @@ public class VehiculoController {
     VehiculoRepository vehiculoRepository;
 
     @GetMapping(path = "/all", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity getAllVehiculo() {
         System.out.println("getAll Vehiculo");
 
@@ -54,7 +67,7 @@ public class VehiculoController {
     }
 
     @GetMapping(value = "/cliente/{rutCliente}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity getVehiculoByCliente(@PathVariable String rutCliente) {
 
         List<VehiculoDto> vehiculoDtoList = vehiculoRepository.findByRutDueno(rutCliente);
@@ -101,7 +114,7 @@ public class VehiculoController {
     }
 
     @GetMapping(value = "/{patente}", produces = "application/json")
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public @ResponseBody ResponseEntity getVehiculo(@PathVariable String patente) {
         VehiculoDto vehiculo = vehiculoRepository.findByPatente(patente);
         if (vehiculo == null) {
@@ -142,7 +155,7 @@ public class VehiculoController {
     }
 
     @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity create(@RequestBody VehiculoRequest newVehiculo) {
 
         VehiculoDto vehiculoDto = new VehiculoDto();
@@ -197,7 +210,7 @@ public class VehiculoController {
     }
 
     @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity update(@RequestBody VehiculoRequest newVehiculo) {
         try {
 
@@ -259,7 +272,7 @@ public class VehiculoController {
     }
 
     @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "*")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<VehiculoDto> delete(@RequestBody VehiculoRequest newVehiculo) {
 
         try {
