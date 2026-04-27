@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @Controller
 @RequestMapping("login")
-//@CrossOrigin(origins = "${taller.server.url}")
 public class LoginController {
 
     @Autowired
     LoginRepository loginRepository;
 
     @PostMapping(path = "/",produces = "application/json")
-    //@CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity<UsersDto> login(@RequestBody Users newUsers) {
         Optional<UsersDto> resp = loginRepository.findByUsersAndPass(newUsers.getUsers(), newUsers.getPass());
@@ -41,7 +41,7 @@ public class LoginController {
     }
 
     @PostMapping(path = "/create",produces = "application/json")
-    //@CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity<LoginResponse> create(@RequestBody Users users) {
         Optional<UsersDto> user = loginRepository.findByUsersAndPass(users.getUsers(), users.getPass());

@@ -22,6 +22,6 @@ public interface AgendaRepository extends JpaRepository<AgendaDto, Long> {
     @Query(value = "select * from agenda a where a.estado = :estado and a.habilitado = true", nativeQuery = true)
     List<AgendaDto> findByEstado(String estado);
 
-    @Query(value = "select * from agenda a where a.fecha_hora_reserva like %:fecha% and a.habilitado = true", nativeQuery = true)
+    @Query(value = "select * from agenda a where a.fecha_hora_reserva like concat('%', :fecha, '%') and a.habilitado = true", nativeQuery = true)
     List<AgendaDto> findByFechaReservaContains(String fecha);
 }

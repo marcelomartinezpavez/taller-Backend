@@ -19,7 +19,6 @@ import com.personal.taller.service.ClienteService;
 
 @Controller
 @RequestMapping("clientes")
-//@CrossOrigin(origins = "${taller.server.url}")
 public class ClienteController {
 
     @Autowired

@@ -15,7 +15,7 @@ public class OrdenTrabajoRequest {
     private String kilometrajeVehiculoActual;
 
     private long idEmpresa;
-    private List<DetalleRepuestoRequest> detalleRepuesto;
+    private DetalleRepuestoRequest detalleRepuesto;
     private List<RepuestosOrdenRequest> repuestosOrden;
     private List<TrabajosTercerosRequest> trabajosTerceros;
 
@@ -83,11 +83,11 @@ public class OrdenTrabajoRequest {
         this.idEmpresa = idEmpresa;
     }
 
-    public List<DetalleRepuestoRequest> getDetalleRepuesto() {
+    public DetalleRepuestoRequest getDetalleRepuesto() {
         return detalleRepuesto;
     }
 
-    public void setDetalleRepuesto(List<DetalleRepuestoRequest> detalleRepuesto) {
+    public void setDetalleRepuesto(DetalleRepuestoRequest detalleRepuesto) {
         this.detalleRepuesto = detalleRepuesto;
     }
 

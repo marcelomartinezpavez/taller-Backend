@@ -19,7 +19,7 @@ public class RepuestosOrdenDto {
     @Column(name = "valor")
     private long valor;
     @Column(name = "cantidad")
-    private long cantidad; /* Siempre debe ser 1 */
+    private long cantidad = 1; /* Por defecto es 1, puede ser modificado por parámetro */
     @Column(name = "total")
     private long total;
 
