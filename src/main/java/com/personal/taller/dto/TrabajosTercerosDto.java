@@ -12,7 +12,7 @@ public class TrabajosTercerosDto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", length = 4000)
     private String descripcion;
     @Column(name = "porcentajeRecargo")
     private long porcentajeRecargo;

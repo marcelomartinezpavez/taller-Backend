@@ -197,7 +197,7 @@ public class OrdenTrabajoController {
                 cl.setCiudad(clienteDto.get().getCiudad());
                 cl.setTelefono(clienteDto.get().getTelefono());
                 cl.setEmail(clienteDto.get().getEmail());
-                otResponse.setCliente(clienteDto.get());
+                otResponse.setCliente(cl);
             } else {
                 return new ResponseEntity<>("Cliente no existe", HttpStatus.BAD_REQUEST);
             }
@@ -229,20 +229,18 @@ public class OrdenTrabajoController {
             vehiculo.setCliente(clientesSet);
 
             otResponse.setVehiculo(vehiculo);
-            otResponse.setVehiculo(vehiculoDto);
 
             //DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
             if (newOrdenTrabajo.getDetalleRepuesto() != null) {
                 DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
                 detalleDto.setDescripcion(newOrdenTrabajo.getDetalleRepuesto().getDescripcion());
                 detalleDto.setValor(newOrdenTrabajo.getDetalleRepuesto().getValor());
-                detalleDto.setCantidad(1);
+                long cant = newOrdenTrabajo.getDetalleRepuesto().getCantidad() <= 0 ? 1 : newOrdenTrabajo.getDetalleRepuesto().getCantidad();
+                detalleDto.setCantidad(cant);
                 detalleDto.setTotal(newOrdenTrabajo.getDetalleRepuesto().getTotal());
 
                 detalleDto.setOrdenTrabajo(otResponse);
                 otResponse.setDetalleRepuestos(detalleDto);
-
-                detalleRepository.save(detalleDto);
             }
             
 
@@ -311,6 +309,7 @@ public class OrdenTrabajoController {
             });
 
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>("Error al crear orden de trabajo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(otResponse, HttpStatus.CREATED);
@@ -356,7 +355,7 @@ public class OrdenTrabajoController {
                 cl.setCiudad(clienteDto.get().getCiudad());
                 cl.setTelefono(clienteDto.get().getTelefono());
                 cl.setEmail(clienteDto.get().getEmail());
-                otResponse.setCliente(clienteDto.get());
+                otResponse.setCliente(cl);
             } else {
                 return new ResponseEntity<>("Cliente no existe", HttpStatus.BAD_REQUEST);
             }
@@ -388,14 +387,14 @@ public class OrdenTrabajoController {
             vehiculo.setCliente(clientesSet);
 
             otResponse.setVehiculo(vehiculo);
-            otResponse.setVehiculo(vehiculoDto);
 
             //Set<DetalleRepuestosDto> detalleSet = new HashSet<>();
             if (newOrdenTrabajo.getDetalleRepuesto() != null) {
                 DetalleRepuestosDto detalleDto = new DetalleRepuestosDto();
                 detalleDto.setDescripcion(newOrdenTrabajo.getDetalleRepuesto().getDescripcion());
                 detalleDto.setValor(newOrdenTrabajo.getDetalleRepuesto().getValor());
-                detalleDto.setCantidad(1);
+                long cant = newOrdenTrabajo.getDetalleRepuesto().getCantidad() <= 0 ? 1 : newOrdenTrabajo.getDetalleRepuesto().getCantidad();
+                detalleDto.setCantidad(cant);
                 detalleDto.setTotal(newOrdenTrabajo.getDetalleRepuesto().getTotal());
                 detalleDto.setOrdenTrabajo(otResponse);
                 otResponse.setDetalleRepuestos(detalleDto);

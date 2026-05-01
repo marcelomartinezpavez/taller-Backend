@@ -23,7 +23,7 @@ public class DetalleRepuestosDto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", length = 4000)
     private String descripcion;
     @Column(name = "valor")
     private long valor;

@@ -57,7 +57,8 @@ public class OrdenTrabajoDto implements Serializable {
     private Integer nivelCombustible;
 
     @ManyToOne
-    @JoinColumn(name = "vehiculo_id", referencedColumnName = "id")
+    @JoinColumn(name = "vehiculo_patente", referencedColumnName = "patente")
+    @JsonIgnoreProperties({"cliente", "ordenTrabajo", "hibernateLazyInitializer"})
     private VehiculoDto vehiculo;
 
     @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
@@ -76,7 +77,8 @@ public class OrdenTrabajoDto implements Serializable {
     private Set<TrabajosTercerosDto> trabajosTerceros = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    @JoinColumn(name = "cliente_rut", referencedColumnName = "rut")
+    @JsonIgnoreProperties({"ordenTrabajo", "vehiculo", "hibernateLazyInitializer"})
     private ClienteDto cliente;
 
 

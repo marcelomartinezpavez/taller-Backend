@@ -21,7 +21,6 @@ com\personal\taller\repository\DetalleRepuestoRepository.class
 com\personal\taller\controller\RepuestoController.class
 com\personal\taller\request\ProveedorRequest.class
 com\personal\taller\request\RepuestosOrdenRequest.class
-com\personal\taller\config\WebConfig$1.class
 com\personal\taller\request\AgendaRequest.class
 com\personal\taller\TallerApplication.class
 com\personal\taller\response\ClienteResponse.class

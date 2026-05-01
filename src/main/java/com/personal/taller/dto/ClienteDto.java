@@ -1,12 +1,11 @@
 package com.personal.taller.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
-
-//@Document("clientes")
 
 @JsonIgnoreProperties({ "hibernateLazyInitializer" })
 @Entity
@@ -15,15 +14,14 @@ public class ClienteDto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(name = "rut", unique = true)
+    private String rut;
     @Column(name = "habilitado")
     private boolean habilitado;
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "apellido")
     private String apellido;
-    // @Id
-    @Column(name = "rut")
-    private String rut;
     @Column(name = "direccion")
     private String direccion;
     @Column(name = "comuna")
@@ -35,26 +33,24 @@ public class ClienteDto implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @Column(name = "ordenTrabajo")
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
     private Set<OrdenTrabajoDto> ordenTrabajo;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Column(name = "vehiculo")
+    @JsonIgnore
+    @ManyToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
     private Set<VehiculoDto> vehiculo;
 
     public ClienteDto() {
     }
 
-    public ClienteDto(long id, boolean habilitado, String nombre, String apellido, String rut, String direccion,
-            String comuna,
-            String ciudad, String telefono, String email) {
+    public ClienteDto(String rut, boolean habilitado, String nombre, String apellido, String direccion,
+            String comuna, String ciudad, String telefono, String email) {
         super();
-        this.id = id;
+        this.rut = rut;
         this.habilitado = habilitado;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.rut = rut;
         this.direccion = direccion;
         this.comuna = comuna;
         this.ciudad = ciudad;
@@ -68,6 +64,14 @@ public class ClienteDto implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getRut() {
+        return rut;
+    }
+
+    public void setRut(String rut) {
+        this.rut = rut;
     }
 
     public boolean getHabilitado() {
@@ -92,14 +96,6 @@ public class ClienteDto implements Serializable {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
-    }
-
-    public String getRut() {
-        return rut;
-    }
-
-    public void setRut(String rut) {
-        this.rut = rut;
     }
 
     public String getDireccion() {
@@ -142,6 +138,7 @@ public class ClienteDto implements Serializable {
         this.email = email;
     }
 
+    @JsonIgnore
     public Set<OrdenTrabajoDto> getOrdenTrabajo() {
         return ordenTrabajo;
     }
@@ -150,6 +147,7 @@ public class ClienteDto implements Serializable {
         this.ordenTrabajo = ordenTrabajo;
     }
 
+    @JsonIgnore
     public Set<VehiculoDto> getVehiculo() {
         return vehiculo;
     }
@@ -158,5 +156,4 @@ public class ClienteDto implements Serializable {
         this.vehiculo = vehiculo;
     }
 
-  
 }

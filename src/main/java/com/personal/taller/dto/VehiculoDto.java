@@ -1,5 +1,6 @@
 package com.personal.taller.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -13,14 +14,14 @@ public class VehiculoDto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(name = "patente", unique = true)
+    private String patente;
     @Column(name = "habilitado")
     private boolean habilitado;
     @Column(name = "marca")
     private String marca;
     @Column(name = "modelo")
     private String modelo;
-    @Column(name = "patente")
-    private String patente;
     @Column(name = "anio")
     private String anio;
     @Column(name = "numeroMotor")
@@ -34,25 +35,26 @@ public class VehiculoDto implements Serializable {
     @Column(name = "kilometraje")
     private String kilometraje;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Column(name = "cliente")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "vehiculo_cliente",
+        joinColumns = @JoinColumn(name = "vehiculo_patente"),
+        inverseJoinColumns = @JoinColumn(name = "cliente_rut"))
     private Set<ClienteDto> cliente;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @Column(name = "ordenTrabajo")
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehiculo", fetch = FetchType.LAZY)
     private Set<OrdenTrabajoDto> ordenTrabajo;
 
     public VehiculoDto() {
     }
 
-    public VehiculoDto(long id, boolean habilitado, String marca, String modelo, String patente, String anio,
+    public VehiculoDto(String patente, boolean habilitado, String marca, String modelo, String anio,
             String numeroMotor, String numeroChasis, String rutDueno, String color, String kilometraje) {
         super();
-        this.id = id;
+        this.patente = patente;
         this.habilitado = habilitado;
         this.marca = marca;
         this.modelo = modelo;
-        this.patente = patente;
         this.anio = anio;
         this.numeroMotor = numeroMotor;
         this.numeroChasis = numeroChasis;
@@ -67,6 +69,14 @@ public class VehiculoDto implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getPatente() {
+        return patente;
+    }
+
+    public void setPatente(String patente) {
+        this.patente = patente;
     }
 
     public boolean getHabilitado() {
@@ -91,14 +101,6 @@ public class VehiculoDto implements Serializable {
 
     public void setModelo(String modelo) {
         this.modelo = modelo;
-    }
-
-    public String getPatente() {
-        return patente;
-    }
-
-    public void setPatente(String patente) {
-        this.patente = patente;
     }
 
     public String getAnio() {
@@ -157,6 +159,7 @@ public class VehiculoDto implements Serializable {
         this.cliente = cliente;
     }
 
+    @JsonIgnore
     public Set<OrdenTrabajoDto> getOrdenTrabajo() {
         return ordenTrabajo;
     }

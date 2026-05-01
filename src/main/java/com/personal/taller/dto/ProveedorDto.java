@@ -1,27 +1,23 @@
 package com.personal.taller.dto;
 
-//import org.springframework.data.annotation.Id;
-//import org.springframework.data.mongodb.core.mapping.Document;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-//@Document("proveedores")
 @Entity
 @Table(name = "proveedores")
 public class ProveedorDto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(name = "rut", unique = true)
+    private String rut;
     @Column(name = "habilitado")
     private boolean habilitado;
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "apellido")
     private String apellido;
-    @Column(name = "rut")
-    private String rut;
     @Column(name = "direccion")
     private String direccion;
     @Column(name = "comuna")
@@ -33,21 +29,18 @@ public class ProveedorDto implements Serializable {
     @Column(name = "email")
     private String email;
 
-/*    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id")
-    private EmpresaDto empresa;*/
-
     @ManyToMany(fetch = FetchType.EAGER)
-    @Column(name = "repuesto")
+    @JoinTable(name = "proveedor_repuesto",
+        joinColumns = @JoinColumn(name = "proveedor_rut"),
+        inverseJoinColumns = @JoinColumn(name = "repuesto_id"))
     private Set<RepuestoDto> repuesto;
 
+    public ProveedorDto() {}
 
-    public ProveedorDto(){}
-
-    public ProveedorDto(long id, boolean habilitado, String nombre, String apellido, String direccion, String comuna,
-                      String ciudad, String telefono, String email) {
+    public ProveedorDto(String rut, boolean habilitado, String nombre, String apellido, String direccion,
+                      String comuna, String ciudad, String telefono, String email) {
         super();
-        this.id = id;
+        this.rut = rut;
         this.habilitado = habilitado;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -64,6 +57,14 @@ public class ProveedorDto implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getRut() {
+        return rut;
+    }
+
+    public void setRut(String rut) {
+        this.rut = rut;
     }
 
     public boolean getHabilitado() {
@@ -88,14 +89,6 @@ public class ProveedorDto implements Serializable {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
-    }
-
-    public String getRut() {
-        return rut;
-    }
-
-    public void setRut(String rut) {
-        this.rut = rut;
     }
 
     public String getDireccion() {
