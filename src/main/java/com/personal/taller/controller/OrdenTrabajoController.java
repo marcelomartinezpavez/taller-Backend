@@ -2,6 +2,7 @@ package com.personal.taller.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -244,7 +245,7 @@ public class OrdenTrabajoController {
             }
             
 
-            Set<RepuestosOrdenDto> repuestosOrdenSet = new HashSet<>();
+            List<RepuestosOrdenDto> repuestosOrdenSet = new ArrayList<>();
             if (newOrdenTrabajo.getRepuestosOrden() != null) {
                 newOrdenTrabajo.getRepuestosOrden().forEach(repuestoOrden -> {
                     RepuestosOrdenDto repuestosOrdenDto = new RepuestosOrdenDto();
@@ -257,7 +258,6 @@ public class OrdenTrabajoController {
                     long recargo = (repuestoOrden.getValor() * cantidad * repuestoOrden.getPorcentajeRecargo()) / 100;
                     repuestosOrdenDto.setTotal((repuestoOrden.getValor() * cantidad) + recargo);
                     repuestosOrdenDto.setPrestadorServicio(repuestoOrden.getPrestadorServicio());
-                    // repuestosOrdenDto.setOrdenTrabajo(otResponse);
 
                     repuestosOrdenRepository.save(repuestosOrdenDto);
 
@@ -266,7 +266,7 @@ public class OrdenTrabajoController {
             }
             otResponse.setRepuestosOrden(repuestosOrdenSet);
 
-            Set<TrabajosTercerosDto> trabajosTercerosSet = new HashSet<>();
+            List<TrabajosTercerosDto> trabajosTercerosSet = new ArrayList<>();
             if (newOrdenTrabajo.getTrabajosTerceros() != null) {
                 newOrdenTrabajo.getTrabajosTerceros().forEach(trabajosTerceros -> {
                     TrabajosTercerosDto trabajosTercerosDto = new TrabajosTercerosDto();
@@ -279,7 +279,6 @@ public class OrdenTrabajoController {
                     long recargo = (trabajosTerceros.getValorTercero() * cantidad * trabajosTerceros.getPorcentajeRecargoTercero()) / 100;
                     trabajosTercerosDto.setTotal((trabajosTerceros.getValorTercero() * cantidad) + recargo);
                     trabajosTercerosDto.setPrestadorServicio(trabajosTerceros.getPrestadorServicioTercero());
-                    // trabajosTercerosDto.setOrdenTrabajo(otResponse);
 
                     trabajosTercerosRepository.save(trabajosTercerosDto);
 
@@ -406,7 +405,7 @@ public class OrdenTrabajoController {
             });*/
 
             // --- REPUESTOS ORDEN ---
-            Set<RepuestosOrdenDto> roSet = new HashSet<>();
+            List<RepuestosOrdenDto> roList = new ArrayList<>();
             if (newOrdenTrabajo.getRepuestosOrden() != null) {
                 newOrdenTrabajo.getRepuestosOrden().forEach(roReq -> {
                     RepuestosOrdenDto roDto = new RepuestosOrdenDto();
@@ -416,17 +415,17 @@ public class OrdenTrabajoController {
                     roDto.setCantidad(roReq.getCantidad() <= 0 ? 1 : roReq.getCantidad());
                     roDto.setTotal(roReq.getTotal());
                     roDto.setPrestadorServicio(roReq.getPrestadorServicio());
-                    roSet.add(roDto);
+                    roList.add(roDto);
                 });
             }
             otResponse.getRepuestosOrden().clear();
-            roSet.forEach(ro -> {
+            roList.forEach(ro -> {
                 ro.setOrdenTrabajo(otResponse);
                 otResponse.getRepuestosOrden().add(ro);
             });
 
             // --- TRABAJOS TERCEROS ---
-            Set<TrabajosTercerosDto> ttSet = new HashSet<>();
+            List<TrabajosTercerosDto> ttList = new ArrayList<>();
             if (newOrdenTrabajo.getTrabajosTerceros() != null) {
                 newOrdenTrabajo.getTrabajosTerceros().forEach(ttReq -> {
                     TrabajosTercerosDto ttDto = new TrabajosTercerosDto();
@@ -436,11 +435,11 @@ public class OrdenTrabajoController {
                     ttDto.setCantidad(ttReq.getCantidadTercero() <= 0 ? 1 : ttReq.getCantidadTercero());
                     ttDto.setTotal(ttReq.getTotalTercero());
                     ttDto.setPrestadorServicio(ttReq.getPrestadorServicioTercero());
-                    ttSet.add(ttDto);
+                    ttList.add(ttDto);
                 });
             }
             otResponse.getTrabajosTerceros().clear();
-            ttSet.forEach(tt -> {
+            ttList.forEach(tt -> {
                 tt.setOrdenTrabajo(otResponse);
                 otResponse.getTrabajosTerceros().add(tt);
             });

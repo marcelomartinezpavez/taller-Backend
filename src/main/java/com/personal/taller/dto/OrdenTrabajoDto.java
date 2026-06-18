@@ -1,8 +1,8 @@
 package com.personal.taller.dto;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,9 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -61,20 +65,22 @@ public class OrdenTrabajoDto implements Serializable {
     @JsonIgnoreProperties({"cliente", "ordenTrabajo", "hibernateLazyInitializer"})
     private VehiculoDto vehiculo;
 
-    @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
-               cascade = CascadeType.ALL, orphanRemoval = true)
-               @JsonManagedReference
-    private Set<RepuestosOrdenDto> repuestosOrden = new HashSet<>();
+    @OneToMany(mappedBy = "ordenTrabajo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OrderBy("id ASC")
+    @JsonManagedReference
+    private List<RepuestosOrdenDto> repuestosOrden = new ArrayList<>();
 
     @OneToOne(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
               cascade = CascadeType.ALL, orphanRemoval = true)
                 @JsonManagedReference
     private DetalleRepuestosDto detalleRepuestos;
 
-    @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.EAGER,
-               cascade = CascadeType.ALL, orphanRemoval = true)
-               @JsonManagedReference
-    private Set<TrabajosTercerosDto> trabajosTerceros = new HashSet<>();
+    @OneToMany(mappedBy = "ordenTrabajo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OrderBy("id ASC")
+    @JsonManagedReference
+    private List<TrabajosTercerosDto> trabajosTerceros = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "cliente_rut", referencedColumnName = "rut")
@@ -231,19 +237,19 @@ public class OrdenTrabajoDto implements Serializable {
         this.nivelCombustible = nivelCombustible;
     }
 
-    public Set<RepuestosOrdenDto> getRepuestosOrden() {
+    public List<RepuestosOrdenDto> getRepuestosOrden() {
         return repuestosOrden;
     }
 
-    public void setRepuestosOrden(Set<RepuestosOrdenDto> repuestosOrden) {
+    public void setRepuestosOrden(List<RepuestosOrdenDto> repuestosOrden) {
         this.repuestosOrden = repuestosOrden;
     }
 
-    public Set<TrabajosTercerosDto> getTrabajosTerceros() {
+    public List<TrabajosTercerosDto> getTrabajosTerceros() {
         return trabajosTerceros;
     }
 
-    public void setTrabajosTerceros(Set<TrabajosTercerosDto> trabajosTerceros) {
+    public void setTrabajosTerceros(List<TrabajosTercerosDto> trabajosTerceros) {
         this.trabajosTerceros = trabajosTerceros;
     }
 
