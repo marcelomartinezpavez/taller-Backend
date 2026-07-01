@@ -7,6 +7,7 @@ public class ClienteRequest {
     private String nombre;
     private String apellido;
     private String rut;
+    private String oldRut;
     private String direccion;
     private String comuna;
     private String ciudad;
@@ -52,6 +53,14 @@ public class ClienteRequest {
 
     public void setRut(String rut) {
         this.rut = rut;
+    }
+
+    public String getOldRut() {
+        return oldRut;
+    }
+
+    public void setOldRut(String oldRut) {
+        this.oldRut = oldRut;
     }
 
     public String getDireccion() {

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,6 +153,91 @@ public class ClienteServiceImpl implements ClienteService {
         clienteRepository.save(cliente);
 
         return new ResponseEntity(cliente, HttpStatus.CREATED);
+    }
+
+    @Transactional
+    public ResponseEntity changeRut(ClienteRequest request) {
+        String oldRut = request.getOldRut();
+        String newRut = request.getRut();
+        final String TEMP_RUT = "1-9";
+
+        Optional<ClienteDto> clienteOpt = clienteRepository.findByRutAndHabilitado(oldRut);
+        if (!clienteOpt.isPresent()) {
+            return new ResponseEntity("Cliente no encontrado", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!oldRut.equals(newRut)) {
+            Optional<ClienteDto> existsOpt = clienteRepository.findByRutAndHabilitado(newRut);
+            if (existsOpt.isPresent()) {
+                return new ResponseEntity("El nuevo RUT ya está registrado", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        ClienteDto original = clienteOpt.get();
+        original.setNombre(request.getNombre());
+        original.setApellido(request.getApellido());
+        original.setDireccion(request.getDireccion());
+        original.setComuna(request.getComuna());
+        original.setCiudad(request.getCiudad());
+        original.setTelefono(request.getTelefono());
+        original.setEmail(request.getEmail());
+        original.setHabilitado(request.getHabilitado());
+
+        if (oldRut.equals(newRut)) {
+            clienteRepository.save(original);
+            return new ResponseEntity(original, HttpStatus.OK);
+        }
+
+        // 1. Crear cliente temporal con rut "1-9"
+        ClienteDto temp = new ClienteDto();
+        temp.setRut(TEMP_RUT);
+        temp.setNombre("TEMP");
+        temp.setApellido("TEMP");
+        temp.setHabilitado(true);
+        temp.setDireccion("");
+        temp.setComuna("");
+        temp.setCiudad("");
+        temp.setTelefono("");
+        temp.setEmail("");
+        clienteRepository.save(temp);
+
+        // 2. Mover todas las asociaciones del rut antiguo → "1-9"
+        clienteRepository.updateVehiculoClienteRut(oldRut, TEMP_RUT);
+        clienteRepository.updateOrdenTrabajoClienteRut(oldRut, TEMP_RUT);
+        clienteRepository.updateOrdenTrabajoRutCliente(oldRut, TEMP_RUT);
+        clienteRepository.updateAgendaRutCliente(oldRut, TEMP_RUT);
+        clienteRepository.updateVehiculoRutDueno(oldRut, TEMP_RUT);
+
+        // 3. Cambiar el rut del cliente
+        clienteRepository.updateClienteRut(oldRut, newRut);
+
+        // 4. Mover todas las asociaciones de "1-9" → nuevo rut
+        clienteRepository.updateVehiculoClienteRut(TEMP_RUT, newRut);
+        clienteRepository.updateOrdenTrabajoClienteRut(TEMP_RUT, newRut);
+        clienteRepository.updateOrdenTrabajoRutCliente(TEMP_RUT, newRut);
+        clienteRepository.updateAgendaRutCliente(TEMP_RUT, newRut);
+        clienteRepository.updateVehiculoRutDueno(TEMP_RUT, newRut);
+
+        // 5. Eliminar cliente temporal
+        clienteRepository.deleteByRut(TEMP_RUT);
+
+        // 6. Actualizar los demás campos del cliente con el nuevo rut
+        Optional<ClienteDto> updatedOpt = clienteRepository.findByRutAndHabilitado(newRut);
+        if (updatedOpt.isPresent()) {
+            ClienteDto updated = updatedOpt.get();
+            updated.setNombre(request.getNombre());
+            updated.setApellido(request.getApellido());
+            updated.setDireccion(request.getDireccion());
+            updated.setComuna(request.getComuna());
+            updated.setCiudad(request.getCiudad());
+            updated.setTelefono(request.getTelefono());
+            updated.setEmail(request.getEmail());
+            updated.setHabilitado(request.getHabilitado());
+            clienteRepository.save(updated);
+            return new ResponseEntity(updated, HttpStatus.OK);
+        }
+
+        return new ResponseEntity("Error al cambiar RUT", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public ResponseEntity deleteClient(ClienteRequest newCliente){

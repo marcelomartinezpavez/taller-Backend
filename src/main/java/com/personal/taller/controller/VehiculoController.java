@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -269,6 +270,92 @@ public class VehiculoController {
             return new ResponseEntity("Ocurrio un error interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @Transactional
+    @PutMapping(path = "/changePatente", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity changePatente(@RequestBody VehiculoRequest request) {
+        String oldPatente = request.getOldPatente();
+        String newPatente = request.getPatente();
+        final String TEMP_PATENTE = "AAAA11";
+
+        VehiculoDto existing = vehiculoRepository.findByPatente(oldPatente);
+        if (existing == null) {
+            return new ResponseEntity("Vehículo no encontrado", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!oldPatente.equals(newPatente)) {
+            VehiculoDto existsNew = vehiculoRepository.findByPatente(newPatente);
+            if (existsNew != null) {
+                return new ResponseEntity("La nueva patente ya está registrada", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Actualizar campos sin cambio de patente
+        existing.setMarca(request.getMarca());
+        existing.setModelo(request.getModelo());
+        existing.setAnio(request.getAnio());
+        existing.setColor(request.getColor());
+        existing.setKilometraje(request.getKilometraje());
+        existing.setNumeroMotor(request.getNumeroMotor());
+        existing.setNumeroChasis(request.getNumeroChasis());
+        existing.setRutDueno(request.getRutDueno());
+        existing.setHabilitado(request.getHabilitado());
+
+        if (oldPatente.equals(newPatente)) {
+            vehiculoRepository.save(existing);
+            return new ResponseEntity(existing, HttpStatus.OK);
+        }
+
+        // 1. Crear vehículo temporal con patente "AAAA11"
+        VehiculoDto temp = new VehiculoDto();
+        temp.setPatente(TEMP_PATENTE);
+        temp.setMarca("TEMP");
+        temp.setModelo("TEMP");
+        temp.setHabilitado(true);
+        temp.setRutDueno(existing.getRutDueno());
+        temp.setAnio("");
+        temp.setColor("");
+        temp.setKilometraje("");
+        temp.setNumeroMotor("");
+        temp.setNumeroChasis("");
+        vehiculoRepository.save(temp);
+
+        // 2. Mover todas las asociaciones de la patente antigua → "AAAA11"
+        vehiculoRepository.updateVehiculoClientePatente(oldPatente, TEMP_PATENTE);
+        vehiculoRepository.updateOrdenTrabajoVehiculoPatente(oldPatente, TEMP_PATENTE);
+        vehiculoRepository.updateOrdenTrabajoPatenteVehiculo(oldPatente, TEMP_PATENTE);
+        vehiculoRepository.updateAgendaPatenteVehiculo(oldPatente, TEMP_PATENTE);
+
+        // 3. Cambiar la patente del vehículo
+        vehiculoRepository.updateVehiculoPatente(oldPatente, newPatente);
+
+        // 4. Mover todas las asociaciones de "AAAA11" → nueva patente
+        vehiculoRepository.updateVehiculoClientePatente(TEMP_PATENTE, newPatente);
+        vehiculoRepository.updateOrdenTrabajoVehiculoPatente(TEMP_PATENTE, newPatente);
+        vehiculoRepository.updateOrdenTrabajoPatenteVehiculo(TEMP_PATENTE, newPatente);
+        vehiculoRepository.updateAgendaPatenteVehiculo(TEMP_PATENTE, newPatente);
+
+        // 5. Eliminar vehículo temporal
+        vehiculoRepository.deleteByPatente(TEMP_PATENTE);
+
+        // 6. Actualizar los demás campos
+        VehiculoDto updated = vehiculoRepository.findByPatente(newPatente);
+        if (updated != null) {
+            updated.setMarca(request.getMarca());
+            updated.setModelo(request.getModelo());
+            updated.setAnio(request.getAnio());
+            updated.setColor(request.getColor());
+            updated.setKilometraje(request.getKilometraje());
+            updated.setNumeroMotor(request.getNumeroMotor());
+            updated.setNumeroChasis(request.getNumeroChasis());
+            updated.setRutDueno(request.getRutDueno());
+            updated.setHabilitado(request.getHabilitado());
+            vehiculoRepository.save(updated);
+            return new ResponseEntity(updated, HttpStatus.OK);
+        }
+
+        return new ResponseEntity("Error al cambiar patente", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

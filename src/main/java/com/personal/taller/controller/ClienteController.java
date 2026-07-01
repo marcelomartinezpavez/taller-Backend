@@ -48,6 +48,11 @@ public class ClienteController {
         return clienteService.updateClient(newCliente);
     }
 
+    @PutMapping(path = "/changeRut", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity changeRut(@RequestBody ClienteRequest request) {
+        return clienteService.changeRut(request);
+    }
+
     @DeleteMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     //@CrossOrigin(origins = "*")
     public ResponseEntity<ClienteDto> delete(@RequestBody ClienteRequest newCliente) {

@@ -15,6 +15,8 @@ public interface ClienteService {
 
     ResponseEntity updateClient(ClienteRequest newCliente);
 
+    ResponseEntity changeRut(ClienteRequest request);
+
     ResponseEntity deleteClient(ClienteRequest newCliente);
 
 }

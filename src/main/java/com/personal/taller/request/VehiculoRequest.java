@@ -12,6 +12,7 @@ public class VehiculoRequest {
     private String marca;
     private String modelo;
     private String patente;
+    private String oldPatente;
     private String anio;
     private String numeroMotor;
     private String numeroChasis;
@@ -61,6 +62,14 @@ public class VehiculoRequest {
 
     public void setPatente(String patente) {
         this.patente = patente;
+    }
+
+    public String getOldPatente() {
+        return oldPatente;
+    }
+
+    public void setOldPatente(String oldPatente) {
+        this.oldPatente = oldPatente;
     }
 
     public String getAnio() {
